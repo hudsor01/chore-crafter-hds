@@ -1,5 +1,15 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { 
+  addChoreToDb, 
+  createChartInDb, 
+  addChildToDb, 
+  addAssignmentToDb, 
+  getChartsFromDb,
+  getChoresByChartId,
+  getChildrenByChartId
+} from '@/services/supabaseService';
+import { useToast } from '@/components/ui/use-toast';
 
 // Define types
 export type Child = {
@@ -62,6 +72,7 @@ type ChoreContextType = {
   deleteChart: (id: string) => void;
   getChoreById: (templateId: string, choreId: string) => Chore | undefined;
   addChoreToTemplate: (templateId: string, chore: Omit<Chore, 'id'>) => void;
+  isLoading: boolean;
 };
 
 const ChoreContext = createContext<ChoreContextType | undefined>(undefined);
@@ -188,6 +199,9 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     return saved ? JSON.parse(saved) : [];
   });
   
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  
   // Save to local storage whenever data changes
   useEffect(() => {
     localStorage.setItem('choreTemplates', JSON.stringify(templates));
@@ -197,6 +211,32 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('choreCharts', JSON.stringify(charts));
   }, [charts]);
   
+  // Load charts from Supabase on initial load
+  useEffect(() => {
+    const fetchCharts = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getChartsFromDb();
+        
+        // Convert database charts to our application format
+        // This is a placeholder for now - actual implementation will depend on your data structure
+        // setCharts(convertDbChartsToAppFormat(data));
+      } catch (error) {
+        console.error('Error fetching charts:', error);
+        toast({
+          title: "Error fetching charts",
+          description: "Could not fetch your charts from the database.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // Uncomment when ready to fetch from Supabase
+    // fetchCharts();
+  }, []);
+  
   const getTemplateById = (id: string) => {
     return templates.find(template => template.id === id);
   };
@@ -205,15 +245,61 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     return charts.find(chart => chart.id === id);
   };
   
-  const createChart = (chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const createChart = async (chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>) => {
     const now = new Date().toISOString();
+    
+    // Create chart in local state
     const newChart: ChoreChart = {
       ...chart,
       id: `chart-${Date.now()}`,
       createdAt: now,
       updatedAt: now,
     };
+    
     setCharts(prev => [...prev, newChart]);
+    
+    try {
+      // Create chart in database
+      const dbChart = await createChartInDb({
+        name: newChart.name,
+        template_id: newChart.templateId,
+      });
+      
+      // Add children to database
+      for (const child of chart.children) {
+        await addChildToDb({
+          name: child.name,
+          chart_id: dbChart.id,
+        });
+      }
+      
+      // Add custom chores if any
+      if (chart.customChores && chart.customChores.length > 0) {
+        for (const chore of chart.customChores) {
+          await addChoreToDb({
+            name: chore.name,
+            description: chore.description,
+            icon: chore.icon,
+            frequency: chore.schedule.frequency,
+            days_of_week: chore.schedule.daysOfWeek,
+            chart_id: dbChart.id,
+            category: chore.category,
+          });
+        }
+      }
+      
+      // For now, we'll keep using the local version
+      // Later we can update the chart with the database IDs
+      
+    } catch (error) {
+      console.error('Error creating chart in database:', error);
+      toast({
+        title: "Database Error",
+        description: "Chart created locally but could not be saved to the database.",
+        variant: "destructive",
+      });
+    }
+    
     return newChart;
   };
   
@@ -223,10 +309,14 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
       updatedAt: new Date().toISOString(),
     };
     setCharts(prev => prev.map(c => c.id === updatedChart.id ? updatedChart : c));
+    
+    // TODO: Update chart in database as well
   };
   
   const deleteChart = (id: string) => {
     setCharts(prev => prev.filter(c => c.id !== id));
+    
+    // TODO: Delete chart from database as well
   };
   
   const getChoreById = (templateId: string, choreId: string) => {
@@ -261,6 +351,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     deleteChart,
     getChoreById,
     addChoreToTemplate,
+    isLoading,
   };
   
   return <ChoreContext.Provider value={value}>{children}</ChoreContext.Provider>;

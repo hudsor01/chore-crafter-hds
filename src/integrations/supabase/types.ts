@@ -9,7 +9,142 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      children: {
+        Row: {
+          chart_id: string | null
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          chart_id?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          chart_id?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "children_chart_id_fkey"
+            columns: ["chart_id"]
+            isOneToOne: false
+            referencedRelation: "chore_charts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chore_assignments: {
+        Row: {
+          child_id: string | null
+          chore_id: string | null
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          child_id?: string | null
+          chore_id?: string | null
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          child_id?: string | null
+          chore_id?: string | null
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chore_assignments_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chore_assignments_chore_id_fkey"
+            columns: ["chore_id"]
+            isOneToOne: false
+            referencedRelation: "chores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chore_charts: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          template_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      chores: {
+        Row: {
+          category: string | null
+          chart_id: string | null
+          created_at: string | null
+          days_of_week: string[] | null
+          description: string | null
+          frequency: string
+          icon: string | null
+          id: string
+          name: string
+          specific_dates: string[] | null
+        }
+        Insert: {
+          category?: string | null
+          chart_id?: string | null
+          created_at?: string | null
+          days_of_week?: string[] | null
+          description?: string | null
+          frequency: string
+          icon?: string | null
+          id?: string
+          name: string
+          specific_dates?: string[] | null
+        }
+        Update: {
+          category?: string | null
+          chart_id?: string | null
+          created_at?: string | null
+          days_of_week?: string[] | null
+          description?: string | null
+          frequency?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          specific_dates?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chores_chart_id_fkey"
+            columns: ["chart_id"]
+            isOneToOne: false
+            referencedRelation: "chore_charts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
