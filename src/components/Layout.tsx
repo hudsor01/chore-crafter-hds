@@ -26,7 +26,7 @@ const Layout = () => {
       toast({
         title: "Install ChoreChart",
         description: "Install this app on your device for offline use",
-        action: <button onClick={handleInstallClick} className="px-4 py-2 bg-primary text-primary-foreground rounded">Install</button>,
+        action: <button onClick={handleInstallClick} className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">Install</button>,
         duration: 10000,
       });
     };
@@ -67,14 +67,20 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-indigo-50 to-white">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-6">
         <Outlet />
       </main>
-      <footer className="bg-white py-4 shadow-inner">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-600">
-          &copy; {new Date().getFullYear()} ChoreChart - Create beautiful chore charts for your family
+      <footer className="bg-gradient-to-r from-indigo-500 to-purple-600 py-6 text-white shadow-inner">
+        <div className="container mx-auto px-4 text-center">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold mb-2">ChoreChart</h3>
+            <p className="text-indigo-100">Create beautiful chore charts for your family</p>
+          </div>
+          <div className="text-sm text-indigo-200">
+            &copy; {new Date().getFullYear()} ChoreChart - All rights reserved
+          </div>
         </div>
       </footer>
     </div>

@@ -38,6 +38,7 @@ export type ChoreTemplate = {
   chores: Chore[];
   type: 'daily' | 'weekly' | 'custom';
   thumbnail?: string;
+  allowCustomChores?: boolean;
 };
 
 export type ChoreChart = {
@@ -48,6 +49,7 @@ export type ChoreChart = {
   assignments: ChoreAssignment[];
   createdAt: string;
   updatedAt: string;
+  customChores?: Chore[];
 };
 
 type ChoreContextType = {
@@ -59,6 +61,7 @@ type ChoreContextType = {
   updateChart: (chart: ChoreChart) => void;
   deleteChart: (id: string) => void;
   getChoreById: (templateId: string, choreId: string) => Chore | undefined;
+  addChoreToTemplate: (templateId: string, chore: Omit<Chore, 'id'>) => void;
 };
 
 const ChoreContext = createContext<ChoreContextType | undefined>(undefined);
@@ -170,6 +173,7 @@ const defaultTemplates: ChoreTemplate[] = [
     type: 'custom',
     thumbnail: '/templates/custom.png',
     chores: [],
+    allowCustomChores: true,
   }
 ];
 
@@ -230,6 +234,23 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     return template?.chores.find(chore => chore.id === choreId);
   };
   
+  const addChoreToTemplate = (templateId: string, chore: Omit<Chore, 'id'>) => {
+    const newChore: Chore = {
+      ...chore,
+      id: `chore-${Date.now()}`,
+    };
+    
+    setTemplates(prev => prev.map(template => {
+      if (template.id === templateId) {
+        return {
+          ...template,
+          chores: [...template.chores, newChore],
+        };
+      }
+      return template;
+    }));
+  };
+  
   const value = {
     templates,
     charts,
@@ -239,6 +260,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     updateChart,
     deleteChart,
     getChoreById,
+    addChoreToTemplate,
   };
   
   return <ChoreContext.Provider value={value}>{children}</ChoreContext.Provider>;

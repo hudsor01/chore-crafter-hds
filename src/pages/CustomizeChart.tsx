@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useChores, Child, ChoreTemplate, ChoreAssignment, Chore } from "@/contexts/ChoreContext";
@@ -7,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, Plus, Trash, Calendar, User } from "lucide-react";
+import { Check, Plus, Trash, Calendar, User, ListCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -23,6 +24,7 @@ const CustomizeChart = () => {
   const [children, setChildren] = useState<Child[]>([]);
   const [newChildName, setNewChildName] = useState<string>("");
   const [assignments, setAssignments] = useState<ChoreAssignment[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("details");
   
   useEffect(() => {
     if (!templateId) {
@@ -143,25 +145,30 @@ const CustomizeChart = () => {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Customize Your Chore Chart</h1>
+        <h1 className="text-3xl font-bold text-indigo-800 mb-2">Customize Your Chore Chart</h1>
         <p className="text-gray-600">
           Add children, assign chores, and customize your {template.name} chart.
         </p>
       </header>
       
-      <Tabs defaultValue="details" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="details">Chart Details</TabsTrigger>
-          <TabsTrigger value="children">Children</TabsTrigger>
-          <TabsTrigger value="assign">Assign Chores</TabsTrigger>
+      <Tabs 
+        defaultValue="details" 
+        className="space-y-6"
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
+        <TabsList className="bg-indigo-100 border border-indigo-200">
+          <TabsTrigger value="details" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Chart Details</TabsTrigger>
+          <TabsTrigger value="children" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Children</TabsTrigger>
+          <TabsTrigger value="assign" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Assign Chores</TabsTrigger>
         </TabsList>
         
         <TabsContent value="details" className="space-y-4">
-          <Card>
-            <CardHeader>
+          <Card className="border-indigo-200 shadow-md">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
               <CardTitle>Chart Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 pt-4">
               <div>
                 <Label htmlFor="chart-name">Chart Name</Label>
                 <Input
@@ -169,15 +176,16 @@ const CustomizeChart = () => {
                   value={chartName}
                   onChange={(e) => setChartName(e.target.value)}
                   placeholder="Enter a name for your chart"
+                  className="border-indigo-200"
                 />
               </div>
               
               <div>
                 <Label>Template</Label>
-                <div className="flex items-center p-2 border rounded-md bg-gray-50">
-                  <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+                <div className="flex items-center p-2 border rounded-md bg-indigo-50 border-indigo-200">
+                  <Calendar className="h-5 w-5 mr-2 text-indigo-600" />
                   <span>{template.name}</span>
-                  <Badge variant="outline" className="ml-2">{template.type}</Badge>
+                  <Badge variant="outline" className="ml-2 bg-indigo-100 text-indigo-800 border-indigo-300">{template.type}</Badge>
                 </div>
               </div>
               
@@ -185,9 +193,18 @@ const CustomizeChart = () => {
                 <Label>Included Chores</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
                   {template.chores.map((chore) => (
-                    <div key={chore.id} className="flex items-center p-2 border rounded-md">
-                      <span>{chore.icon}</span>
-                      <span className="ml-2">{chore.name}</span>
+                    <div key={chore.id} className="flex items-center p-2 border border-indigo-200 rounded-md bg-white hover:bg-indigo-50 transition-colors">
+                      <span className="mr-2 text-lg">{chore.icon}</span>
+                      <div>
+                        <div className="font-medium text-indigo-900">{chore.name}</div>
+                        <div className="text-xs text-indigo-600">
+                          {chore.schedule.frequency === 'daily' ? 'Every day' : 
+                           chore.schedule.frequency === 'weekly' && chore.schedule.daysOfWeek ? 
+                           chore.schedule.daysOfWeek.map(day => 
+                             day.charAt(0).toUpperCase() + day.slice(1)).join(', ') : 
+                           chore.schedule.frequency}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -197,24 +214,24 @@ const CustomizeChart = () => {
         </TabsContent>
         
         <TabsContent value="children" className="space-y-4">
-          <Card>
-            <CardHeader>
+          <Card className="border-indigo-200 shadow-md">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
               <CardTitle>Add Children</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 pt-4">
               <div className="flex space-x-2">
                 <Input
                   value={newChildName}
                   onChange={(e) => setNewChildName(e.target.value)}
                   placeholder="Enter child's name"
-                  className="flex-1"
+                  className="flex-1 border-indigo-200"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       handleAddChild();
                     }
                   }}
                 />
-                <Button onClick={handleAddChild}>
+                <Button onClick={handleAddChild} className="bg-indigo-600 hover:bg-indigo-700">
                   <Plus className="h-4 w-4 mr-2" /> Add
                 </Button>
               </div>
@@ -222,25 +239,27 @@ const CustomizeChart = () => {
               {children.length > 0 ? (
                 <div className="space-y-2">
                   {children.map((child) => (
-                    <div key={child.id} className="flex justify-between items-center p-2 border rounded-md">
+                    <div key={child.id} className="flex justify-between items-center p-2 border border-indigo-200 rounded-md hover:bg-indigo-50 transition-colors">
                       <div className="flex items-center">
-                        <User className="h-5 w-5 mr-2 text-blue-600" />
-                        <span>{child.name}</span>
+                        <User className="h-5 w-5 mr-2 text-indigo-600" />
+                        <span className="font-medium">{child.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteChild(child.id)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
                       >
-                        <Trash className="h-4 w-4 text-red-500" />
+                        <Trash className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <User className="h-10 w-10 mx-auto mb-2 text-gray-400" />
+                <div className="text-center py-8 text-gray-500 bg-indigo-50 rounded-lg border border-dashed border-indigo-300">
+                  <User className="h-10 w-10 mx-auto mb-2 text-indigo-400" />
                   <p>No children added yet</p>
+                  <p className="text-sm text-indigo-400 mt-1">Add children to assign chores to them</p>
                 </div>
               )}
             </CardContent>
@@ -249,18 +268,18 @@ const CustomizeChart = () => {
         
         <TabsContent value="assign" className="space-y-4">
           {children.length > 0 ? (
-            <Card>
-              <CardHeader>
+            <Card className="border-indigo-200 shadow-md">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
                 <CardTitle>Assign Chores</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-4">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr>
-                        <th className="text-left p-2">Chore</th>
+                        <th className="text-left p-2 text-indigo-800">Chore</th>
                         {children.map((child) => (
-                          <th key={child.id} className="text-center p-2">
+                          <th key={child.id} className="text-center p-2 text-indigo-800">
                             {child.name}
                           </th>
                         ))}
@@ -268,13 +287,13 @@ const CustomizeChart = () => {
                     </thead>
                     <tbody>
                       {template.chores.map((chore) => (
-                        <tr key={chore.id} className="border-t">
+                        <tr key={chore.id} className="border-t border-indigo-100 hover:bg-indigo-50 transition-colors">
                           <td className="p-2">
                             <div className="flex items-center">
-                              <span className="mr-2">{chore.icon}</span>
+                              <span className="mr-2 text-lg">{chore.icon}</span>
                               <div>
-                                <div>{chore.name}</div>
-                                <div className="text-xs text-gray-500">
+                                <div className="font-medium text-indigo-900">{chore.name}</div>
+                                <div className="text-xs text-indigo-600">
                                   {chore.schedule.frequency === 'daily' ? 'Every day' : 
                                    chore.schedule.frequency === 'weekly' && chore.schedule.daysOfWeek ? 
                                    chore.schedule.daysOfWeek.map(day => 
@@ -287,6 +306,7 @@ const CustomizeChart = () => {
                           {children.map((child) => (
                             <td key={child.id} className="text-center p-2">
                               <Checkbox
+                                className="border-indigo-300 text-indigo-600 data-[state=checked]:bg-indigo-600"
                                 checked={isAssigned(chore.id, child.id)}
                                 onCheckedChange={() => toggleAssignment(chore.id, child.id)}
                               />
@@ -300,18 +320,15 @@ const CustomizeChart = () => {
               </CardContent>
             </Card>
           ) : (
-            <Card>
+            <Card className="border-indigo-200 shadow-md">
               <CardContent className="text-center py-8">
-                <p className="text-gray-500">Please add children before assigning chores.</p>
+                <ListCheck className="h-12 w-12 mx-auto mb-2 text-indigo-400" />
+                <p className="text-gray-500 mb-4">Please add children before assigning chores.</p>
                 <Button 
                   variant="outline" 
-                  className="mt-2"
+                  className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
                   onClick={() => {
-                    // Find the children tab trigger and click it
-                    const childrenTab = document.querySelector('[data-value="children"]');
-                    if (childrenTab) {
-                      (childrenTab as HTMLElement).click();
-                    }
+                    setActiveTab("children");
                   }}
                 >
                   Go to Children Tab
@@ -323,10 +340,10 @@ const CustomizeChart = () => {
       </Tabs>
       
       <div className="flex justify-end space-x-4 pt-4">
-        <Button variant="outline" onClick={() => navigate('/templates')}>
+        <Button variant="outline" onClick={() => navigate('/templates')} className="border-indigo-300 text-indigo-700 hover:bg-indigo-50">
           Cancel
         </Button>
-        <Button onClick={handleSaveChart}>
+        <Button onClick={handleSaveChart} className="bg-indigo-600 hover:bg-indigo-700">
           <Check className="mr-2 h-4 w-4" /> Create Chart
         </Button>
       </div>
