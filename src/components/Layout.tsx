@@ -16,12 +16,12 @@ const Layout = () => {
       });
     }
 
-    // Listen for beforeinstallprompt event to detect when the app can be installed
-    window.addEventListener('beforeinstallprompt', (e) => {
+    // Define the event handler for beforeinstallprompt
+    const handleBeforeInstallPrompt = (e: Event) => {
       // Prevent the default browser prompt
       e.preventDefault();
       // Store the event for later use
-      window.deferredPrompt = e;
+      window.deferredPrompt = e as BeforeInstallPromptEvent;
       // Show a toast notification
       toast({
         title: "Install ChoreChart",
@@ -29,26 +29,28 @@ const Layout = () => {
         action: <button onClick={handleInstallClick} className="px-4 py-2 bg-primary text-primary-foreground rounded">Install</button>,
         duration: 10000,
       });
-    });
+    };
+
+    // Listen for beforeinstallprompt event to detect when the app can be installed
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', () => {});
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
   }, [toast]);
 
   const handleInstallClick = async () => {
-    const promptEvent = window.deferredPrompt;
-    if (!promptEvent) {
+    if (!window.deferredPrompt) {
       return;
     }
     
     // Show the install prompt
-    promptEvent.prompt();
+    await window.deferredPrompt.prompt();
     
     // Wait for the user to respond to the prompt
-    const userChoice = await promptEvent.userChoice;
+    const choiceResult = await window.deferredPrompt.userChoice;
     
-    if (userChoice.outcome === 'accepted') {
+    if (choiceResult.outcome === 'accepted') {
       toast({
         title: "Thank you!",
         description: "ChoreChart has been installed on your device."

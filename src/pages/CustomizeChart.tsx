@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useChores, Child, ChoreTemplate, ChoreAssignment, Chore } from "@/contexts/ChoreContext";
@@ -307,7 +306,13 @@ const CustomizeChart = () => {
                 <Button 
                   variant="outline" 
                   className="mt-2"
-                  onClick={() => document.querySelector('[data-state="inactive"][data-value="children"]')?.click()}
+                  onClick={() => {
+                    // Find the children tab trigger and click it
+                    const childrenTab = document.querySelector('[data-value="children"]');
+                    if (childrenTab) {
+                      (childrenTab as HTMLElement).click();
+                    }
+                  }}
                 >
                   Go to Children Tab
                 </Button>
