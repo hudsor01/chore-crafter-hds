@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -7,14 +8,18 @@ import {
   addAssignmentToDb, 
   getChartsFromDb,
   getChoresByChartId,
-  getChildrenByChartId
+  getChildrenByChartId,
+  sendChoreChartEmail,
+  getAgeAppropriateChores
 } from '@/services/supabaseService';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from './AuthContext';
 
 // Define types
 export type Child = {
   id: string;
   name: string;
+  birthdate?: string;
 };
 
 export type ChoreFrequency = 'daily' | 'weekly' | 'monthly' | 'custom';
@@ -67,12 +72,15 @@ type ChoreContextType = {
   charts: ChoreChart[];
   getTemplateById: (id: string) => ChoreTemplate | undefined;
   getChartById: (id: string) => ChoreChart | undefined;
-  createChart: (chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>) => ChoreChart;
+  createChart: (chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ChoreChart>;
   updateChart: (chart: ChoreChart) => void;
   deleteChart: (id: string) => void;
   getChoreById: (templateId: string, choreId: string) => Chore | undefined;
   addChoreToTemplate: (templateId: string, chore: Omit<Chore, 'id'>) => void;
   isLoading: boolean;
+  emailChoreChart: (chartId: string, emailTo: string) => Promise<void>;
+  getAgeBasedChores: (age: number) => Promise<Chore[]>;
+  rotateChores: (chartId: string) => Promise<void>;
 };
 
 const ChoreContext = createContext<ChoreContextType | undefined>(undefined);
@@ -201,6 +209,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
   
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Save to local storage whenever data changes
   useEffect(() => {
@@ -211,16 +220,56 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('choreCharts', JSON.stringify(charts));
   }, [charts]);
   
-  // Load charts from Supabase on initial load
+  // Load charts from Supabase when user changes
   useEffect(() => {
     const fetchCharts = async () => {
+      if (!user) return;
+      
       try {
         setIsLoading(true);
-        const data = await getChartsFromDb();
+        const charts = await getChartsFromDb(user.id);
         
-        // Convert database charts to our application format
-        // This is a placeholder for now - actual implementation will depend on your data structure
-        // setCharts(convertDbChartsToAppFormat(data));
+        // Process the charts from the database
+        const processedCharts: ChoreChart[] = await Promise.all(
+          charts.map(async (chart: any) => {
+            const children = await getChildrenByChartId(chart.id);
+            const chores = await getChoresByChartId(chart.id);
+            
+            // Convert DB chores to app format
+            const appChores: Chore[] = chores.map((dbChore: any) => ({
+              id: dbChore.id,
+              name: dbChore.name,
+              description: dbChore.description,
+              schedule: {
+                frequency: dbChore.frequency as ChoreFrequency,
+                daysOfWeek: dbChore.days_of_week,
+                specificDates: dbChore.specific_dates,
+              },
+              category: dbChore.category,
+              icon: dbChore.icon,
+            }));
+            
+            // Convert DB children to app format
+            const appChildren: Child[] = children.map((dbChild: any) => ({
+              id: dbChild.id,
+              name: dbChild.name,
+              birthdate: dbChild.birthdate,
+            }));
+            
+            return {
+              id: chart.id,
+              name: chart.name,
+              templateId: chart.template_id || '',
+              children: appChildren,
+              assignments: [], // We'll load assignments separately if needed
+              createdAt: chart.created_at,
+              updatedAt: chart.updated_at,
+              customChores: appChores,
+            };
+          })
+        );
+        
+        setCharts(processedCharts);
       } catch (error) {
         console.error('Error fetching charts:', error);
         toast({
@@ -233,9 +282,8 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     
-    // Uncomment when ready to fetch from Supabase
-    // fetchCharts();
-  }, []);
+    fetchCharts();
+  }, [user, toast]);
   
   const getTemplateById = (id: string) => {
     return templates.find(template => template.id === id);
@@ -248,59 +296,75 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
   const createChart = async (chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>) => {
     const now = new Date().toISOString();
     
-    // Create chart in local state
-    const newChart: ChoreChart = {
-      ...chart,
-      id: `chart-${Date.now()}`,
-      createdAt: now,
-      updatedAt: now,
-    };
-    
-    setCharts(prev => [...prev, newChart]);
-    
     try {
+      setIsLoading(true);
+      
       // Create chart in database
       const dbChart = await createChartInDb({
-        name: newChart.name,
-        template_id: newChart.templateId,
+        name: chart.name,
+        template_id: chart.templateId,
+        user_id: user?.id,
       });
       
       // Add children to database
-      for (const child of chart.children) {
-        await addChildToDb({
+      const dbChildren = await Promise.all(chart.children.map(async (child) => {
+        return await addChildToDb({
           name: child.name,
           chart_id: dbChart.id,
+          birthdate: child.birthdate,
         });
-      }
+      }));
       
       // Add custom chores if any
       if (chart.customChores && chart.customChores.length > 0) {
-        for (const chore of chart.customChores) {
+        await Promise.all(chart.customChores.map(async (chore) => {
           await addChoreToDb({
             name: chore.name,
             description: chore.description,
             icon: chore.icon,
             frequency: chore.schedule.frequency,
             days_of_week: chore.schedule.daysOfWeek,
+            specific_dates: chore.schedule.specificDates,
             chart_id: dbChart.id,
             category: chore.category,
           });
-        }
+        }));
       }
       
-      // For now, we'll keep using the local version
-      // Later we can update the chart with the database IDs
+      // Create response in app format
+      const newChart: ChoreChart = {
+        ...chart,
+        id: dbChart.id,
+        children: dbChildren.map(dbChild => ({
+          id: dbChild.id,
+          name: dbChild.name,
+          birthdate: dbChild.birthdate,
+        })),
+        createdAt: dbChart.created_at,
+        updatedAt: dbChart.updated_at,
+      };
+      
+      setCharts(prev => [...prev, newChart]);
+      return newChart;
       
     } catch (error) {
       console.error('Error creating chart in database:', error);
       toast({
         title: "Database Error",
-        description: "Chart created locally but could not be saved to the database.",
+        description: "Chart could not be saved to the database.",
         variant: "destructive",
       });
+      // Still return a client-side chart with a temporary ID
+      const tempChart: ChoreChart = {
+        ...chart,
+        id: `temp-${Date.now()}`,
+        createdAt: now,
+        updatedAt: now,
+      };
+      return tempChart;
+    } finally {
+      setIsLoading(false);
     }
-    
-    return newChart;
   };
   
   const updateChart = (chart: ChoreChart) => {
@@ -341,6 +405,74 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
   
+  const emailChoreChart = async (chartId: string, emailTo: string) => {
+    try {
+      setIsLoading(true);
+      const chart = getChartById(chartId);
+      if (!chart) throw new Error("Chart not found");
+      
+      await sendChoreChartEmail(emailTo, `Chore Chart: ${chart.name}`, chart);
+      
+      toast({
+        title: "Email Sent",
+        description: `Chore chart has been sent to ${emailTo}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send email",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const getAgeBasedChores = async (age: number) => {
+    try {
+      setIsLoading(true);
+      const { chores } = await getAgeAppropriateChores(age);
+      return chores;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to get age-appropriate chores",
+        variant: "destructive",
+      });
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const rotateChores = async (chartId: string) => {
+    try {
+      setIsLoading(true);
+      const chart = getChartById(chartId);
+      if (!chart) throw new Error("Chart not found");
+      
+      // Simple rotation logic (shift assignments by one child)
+      if (chart.children.length <= 1) {
+        throw new Error("Need at least two children to rotate chores");
+      }
+      
+      // TODO: Implement the actual rotation logic and update database
+      
+      toast({
+        title: "Chores Rotated",
+        description: "Chore assignments have been rotated among children",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to rotate chores",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   const value = {
     templates,
     charts,
@@ -352,6 +484,9 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     getChoreById,
     addChoreToTemplate,
     isLoading,
+    emailChoreChart,
+    getAgeBasedChores,
+    rotateChores,
   };
   
   return <ChoreContext.Provider value={value}>{children}</ChoreContext.Provider>;

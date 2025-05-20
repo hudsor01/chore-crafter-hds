@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -11,11 +11,29 @@ import ChoreTemplates from "./pages/ChoreTemplates";
 import CustomizeChart from "./pages/CustomizeChart";
 import ViewChart from "./pages/ViewChart";
 import Layout from "./components/Layout";
+import Auth from "./pages/Auth";
+import ParentDashboard from "./components/ParentDashboard";
+import { useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-[60vh]">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" />;
+  }
+  
+  return children;
+};
+
 const App = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleOnlineStatus = () => setIsOnline(true);
@@ -43,10 +61,19 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Index />} />
+              <Route index element={user ? <Navigate to="/dashboard" /> : <Index />} />
+              <Route path="auth" element={<Auth />} />
               <Route path="templates" element={<ChoreTemplates />} />
               <Route path="customize/:templateId" element={<CustomizeChart />} />
               <Route path="view/:chartId" element={<ViewChart />} />
+              <Route 
+                path="dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <ParentDashboard />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

@@ -2,10 +2,71 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ChoreChart, Child, Chore, ChoreAssignment } from "@/contexts/ChoreContext";
 
+// Authentication Functions
+export const signUp = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+  if (error) throw error;
+  return data;
+};
+
+export const signIn = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error) throw error;
+  return data;
+};
+
+export const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+};
+
+export const getCurrentUser = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return user;
+};
+
+export const getSession = async () => {
+  const { data: { session }, error } = await supabase.auth.getSession();
+  if (error) throw error;
+  return session;
+};
+
+// User Profile Functions
+export const getUserProfile = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateUserProfile = async (userId: string, profile: any) => {
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .update(profile)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
 // Chart Functions
 export const createChartInDb = async (chart: {
   name: string;
   template_id?: string;
+  user_id?: string;
 }) => {
   const { data, error } = await supabase
     .from('chore_charts')
@@ -17,11 +78,17 @@ export const createChartInDb = async (chart: {
   return data;
 };
 
-export const getChartsFromDb = async () => {
-  const { data, error } = await supabase
+export const getChartsFromDb = async (userId?: string) => {
+  let query = supabase
     .from('chore_charts')
     .select('*')
     .order('created_at', { ascending: false });
+    
+  if (userId) {
+    query = query.eq('user_id', userId);
+  }
+  
+  const { data, error } = await query;
 
   if (error) throw error;
   return data;
@@ -31,6 +98,7 @@ export const getChartsFromDb = async () => {
 export const addChildToDb = async (child: {
   name: string;
   chart_id: string;
+  birthdate?: string;
 }) => {
   const { data, error } = await supabase
     .from('children')
@@ -59,7 +127,7 @@ export const addChoreToDb = async (chore: {
   icon?: string;
   frequency: string;
   days_of_week?: string[];
-  specific_dates?: Date[];
+  specific_dates?: string[]; // Changed from Date[] to string[]
   chart_id: string;
   category?: string;
 }) => {
@@ -104,6 +172,26 @@ export const getAssignmentsByChartId = async (chartId: string) => {
     .select('*, chores(*), children(*)')
     .eq('chores.chart_id', chartId);
 
+  if (error) throw error;
+  return data;
+};
+
+// Email Functions
+export const sendChoreChartEmail = async (to: string, subject: string, chartData: any) => {
+  const { data, error } = await supabase.functions.invoke('send-chore-chart-email', {
+    body: { to, subject, chartData }
+  });
+  
+  if (error) throw error;
+  return data;
+};
+
+// AI Chore Suggestions
+export const getAgeAppropriateChores = async (age: number) => {
+  const { data, error } = await supabase.functions.invoke('chore-suggestions', {
+    body: { age }
+  });
+  
   if (error) throw error;
   return data;
 };
