@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { 
   addChoreToDb, 
@@ -257,8 +258,8 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
               };
               
               // Only add birthdate if it exists in the database
-              if ('birthdate' in dbChild && dbChild.birthdate !== null) {
-                child.birthdate = dbChild.birthdate;
+              if (dbChild.birthdate) {
+                child.birthdate = dbChild.birthdate as string;
               }
               
               return child;
@@ -351,7 +352,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
           };
           
           // Only add birthdate if it exists in the database
-          if ('birthdate' in dbChild && dbChild.birthdate !== null) {
+          if (dbChild.birthdate) {
             child.birthdate = dbChild.birthdate;
           }
           

@@ -66,7 +66,7 @@ export const getChartsFromDb = async (userId?: string) => {
   const { data, error } = await query;
 
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 // Children Functions
@@ -92,7 +92,7 @@ export const getChildrenByChartId = async (chartId: string) => {
     .eq('chart_id', chartId);
 
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 // Chores Functions
@@ -123,7 +123,7 @@ export const getChoresByChartId = async (chartId: string) => {
     .eq('chart_id', chartId);
 
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 // Assignment Functions
@@ -148,7 +148,7 @@ export const getAssignmentsByChartId = async (chartId: string) => {
     .eq('chores.chart_id', chartId);
 
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 // Email Functions
