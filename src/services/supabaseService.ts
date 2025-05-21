@@ -53,8 +53,8 @@ export const createChartInDb = async (chart: {
   return data;
 };
 
-// Define a more specific return type to avoid infinite type instantiation
-export const getChartsFromDb = async (userId?: string) => {
+// Define a specific return type to avoid infinite type instantiation
+export const getChartsFromDb = async (userId?: string): Promise<Array<any>> => {
   let query = supabase
     .from('chore_charts')
     .select('*')
