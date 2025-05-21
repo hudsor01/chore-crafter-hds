@@ -1,7 +1,13 @@
+
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from './AuthContext';
-import { ChoreChart, ChoreTemplate, Chore, ChoreContextType } from './types/choreTypes';
+import { 
+  ChoreChart, 
+  ChoreTemplate, 
+  Chore, 
+  ChoreContextType 
+} from './types/choreTypes';
 import { defaultTemplates } from './data/defaultTemplatesData';
 import { 
   fetchChartsFromDb, 
@@ -9,6 +15,17 @@ import {
   sendChoreChartEmailToUser,
   fetchAgeAppropriateChores
 } from './services/choreApiService';
+
+// Re-export types for backward compatibility
+export type { 
+  ChoreChart, 
+  ChoreTemplate, 
+  Chore, 
+  ChoreFrequency,
+  ChoreSchedule,
+  DayOfWeek,
+  Child
+} from './types/choreTypes';
 
 const ChoreContext = createContext<ChoreContextType | undefined>(undefined);
 

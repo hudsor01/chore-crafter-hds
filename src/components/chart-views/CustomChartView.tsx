@@ -1,5 +1,5 @@
 
-import { Chore, Child } from "@/models/ChoreTypes";
+import { Chore, Child } from "@/contexts/types/choreTypes";
 
 type CustomChartViewProps = {
   chartName: string;
