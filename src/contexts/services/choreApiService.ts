@@ -1,5 +1,5 @@
 
-import { ChoreChart, Child, Chore, ChoreFrequency } from '../types/choreTypes';
+import { ChoreChart, Child, Chore, ChoreFrequency, DayOfWeek } from '../types/choreTypes';
 import { 
   createChartInDb, 
   addChildToDb, 
@@ -24,15 +24,15 @@ export const fetchChartsFromDb = async (userId?: string): Promise<ChoreChart[]> 
         const children = await getChildrenByChartId(chart.id);
         const chores = await getChoresByChartId(chart.id);
         
-        // Convert DB chores to app format
+        // Convert DB chores to app format with proper type handling
         const appChores: Chore[] = chores.map((dbChore: DbChore) => ({
           id: dbChore.id,
           name: dbChore.name,
           description: dbChore.description,
           schedule: {
             frequency: dbChore.frequency as ChoreFrequency,
-            daysOfWeek: dbChore.days_of_week,
-            specificDates: dbChore.specific_dates,
+            daysOfWeek: dbChore.days_of_week as DayOfWeek[] || undefined,
+            specificDates: dbChore.specific_dates || undefined,
           },
           category: dbChore.category,
           icon: dbChore.icon,
@@ -152,15 +152,15 @@ export const sendChoreChartEmailToUser = async (chartId: string, emailTo: string
 export const fetchAgeAppropriateChores = async (age: number): Promise<Chore[]> => {
   try {
     const { chores } = await getAgeAppropriateChores(age);
-    // Convert DB chores to app format
+    // Convert DB chores to app format with proper type handling
     return chores.map((dbChore: DbChore) => ({
       id: dbChore.id,
       name: dbChore.name,
       description: dbChore.description,
       schedule: {
         frequency: dbChore.frequency as ChoreFrequency,
-        daysOfWeek: dbChore.days_of_week,
-        specificDates: dbChore.specific_dates,
+        daysOfWeek: dbChore.days_of_week as DayOfWeek[] || undefined,
+        specificDates: dbChore.specific_dates || undefined,
       },
       category: dbChore.category,
       icon: dbChore.icon,

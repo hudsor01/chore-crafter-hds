@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { ChoreChart } from '@/contexts/types/choreTypes';
+import { ChoreChart, DayOfWeek } from '@/contexts/types/choreTypes';
 
 // Define the data structure returned from the database
 export interface ChartData {
