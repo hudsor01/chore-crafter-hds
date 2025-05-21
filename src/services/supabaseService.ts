@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Authentication Functions
@@ -84,7 +83,7 @@ export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => 
       id: chart.id,
       name: chart.name,
       template_id: chart.template_id,
-      user_id: chart.user_id,
+      user_id: chart.user_id as string | null,
       created_at: chart.created_at,
       updated_at: chart.updated_at
     })) : [];

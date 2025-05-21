@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ChoreChart, Child, Chore, ChoreFrequency } from "@/models/ChoreTypes";
+import { ChoreChart, Child, Chore, ChoreFrequency } from "@/contexts/types/choreTypes";
 import { 
   getChartsFromDb, 
   getChildrenByChartId, 

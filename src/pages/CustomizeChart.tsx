@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useChores, Child, ChoreTemplate, ChoreAssignment, Chore } from "@/contexts/ChoreContext";
+import { useChores } from "@/contexts/ChoreContext";
+import { Child, ChoreTemplate, ChoreAssignment, Chore } from "@/contexts/types/choreTypes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

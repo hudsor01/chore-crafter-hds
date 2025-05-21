@@ -1,200 +1,16 @@
-
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { 
-  addChoreToDb, 
-  createChartInDb, 
-  addChildToDb, 
-  addAssignmentToDb, 
-  getChartsFromDb,
-  getChoresByChartId,
-  getChildrenByChartId,
-  sendChoreChartEmail,
-  getAgeAppropriateChores
-} from '@/services/supabaseService';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from './AuthContext';
-
-// Define types
-export type Child = {
-  id: string;
-  name: string;
-  birthdate?: string;
-};
-
-export type ChoreFrequency = 'daily' | 'weekly' | 'monthly' | 'custom';
-
-export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-
-export type ChoreSchedule = {
-  frequency: ChoreFrequency;
-  daysOfWeek?: DayOfWeek[];
-  specificDates?: string[];
-};
-
-export type Chore = {
-  id: string;
-  name: string;
-  description?: string;
-  schedule: ChoreSchedule;
-  category?: string;
-  icon?: string;
-};
-
-export type ChoreAssignment = {
-  choreId: string;
-  childId: string;
-};
-
-export type ChoreTemplate = {
-  id: string;
-  name: string;
-  description: string;
-  chores: Chore[];
-  type: 'daily' | 'weekly' | 'custom';
-  thumbnail?: string;
-  allowCustomChores?: boolean;
-};
-
-export type ChoreChart = {
-  id: string;
-  name: string;
-  templateId: string;
-  children: Child[];
-  assignments: ChoreAssignment[];
-  createdAt: string;
-  updatedAt: string;
-  customChores?: Chore[];
-};
-
-type ChoreContextType = {
-  templates: ChoreTemplate[];
-  charts: ChoreChart[];
-  getTemplateById: (id: string) => ChoreTemplate | undefined;
-  getChartById: (id: string) => ChoreChart | undefined;
-  createChart: (chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ChoreChart>;
-  updateChart: (chart: ChoreChart) => void;
-  deleteChart: (id: string) => void;
-  getChoreById: (templateId: string, choreId: string) => Chore | undefined;
-  addChoreToTemplate: (templateId: string, chore: Omit<Chore, 'id'>) => void;
-  isLoading: boolean;
-  emailChoreChart: (chartId: string, emailTo: string) => Promise<void>;
-  getAgeBasedChores: (age: number) => Promise<Chore[]>;
-  rotateChores: (chartId: string) => Promise<void>;
-};
+import { ChoreChart, ChoreTemplate, Chore, ChoreContextType } from './types/choreTypes';
+import { defaultTemplates } from './data/defaultTemplatesData';
+import { 
+  fetchChartsFromDb, 
+  createChartInDatabase, 
+  sendChoreChartEmailToUser,
+  fetchAgeAppropriateChores
+} from './services/choreApiService';
 
 const ChoreContext = createContext<ChoreContextType | undefined>(undefined);
-
-// Sample data for templates
-const defaultTemplates: ChoreTemplate[] = [
-  {
-    id: 'daily-chores',
-    name: 'Daily Chores',
-    description: 'Essential chores that need to be done every day',
-    type: 'daily',
-    thumbnail: '/templates/daily.png',
-    chores: [
-      {
-        id: 'make-bed',
-        name: 'Make Bed',
-        description: 'Make your bed neatly first thing in the morning',
-        schedule: { frequency: 'daily' },
-        category: 'bedroom',
-        icon: '🛏️',
-      },
-      {
-        id: 'brush-teeth',
-        name: 'Brush Teeth',
-        description: 'Brush teeth morning and night',
-        schedule: { frequency: 'daily' },
-        category: 'hygiene',
-        icon: '🪥',
-      },
-      {
-        id: 'pick-up-toys',
-        name: 'Pick Up Toys',
-        description: 'Put away all toys before bedtime',
-        schedule: { frequency: 'daily' },
-        category: 'bedroom',
-        icon: '🧸',
-      },
-      {
-        id: 'feed-pet',
-        name: 'Feed Pet',
-        description: 'Feed the pet morning and evening',
-        schedule: { frequency: 'daily' },
-        category: 'pets',
-        icon: '🐕',
-      },
-      {
-        id: 'clear-dishes',
-        name: 'Clear Dishes',
-        description: 'Clear your dishes after meals',
-        schedule: { frequency: 'daily' },
-        category: 'kitchen',
-        icon: '🍽️',
-      },
-    ],
-  },
-  {
-    id: 'weekly-chores',
-    name: 'Weekly Chores',
-    description: 'Chores scheduled on different days of the week',
-    type: 'weekly',
-    thumbnail: '/templates/weekly.png',
-    chores: [
-      {
-        id: 'vacuum',
-        name: 'Vacuum Room',
-        description: 'Vacuum your bedroom thoroughly',
-        schedule: { frequency: 'weekly', daysOfWeek: ['saturday'] },
-        category: 'cleaning',
-        icon: '🧹',
-      },
-      {
-        id: 'laundry',
-        name: 'Do Laundry',
-        description: 'Sort, wash, fold and put away your laundry',
-        schedule: { frequency: 'weekly', daysOfWeek: ['sunday'] },
-        category: 'cleaning',
-        icon: '👕',
-      },
-      {
-        id: 'take-out-trash',
-        name: 'Take Out Trash',
-        description: 'Take out trash and recycling',
-        schedule: { frequency: 'weekly', daysOfWeek: ['monday', 'thursday'] },
-        category: 'cleaning',
-        icon: '🗑️',
-      },
-      {
-        id: 'water-plants',
-        name: 'Water Plants',
-        description: 'Water all house plants',
-        schedule: { frequency: 'weekly', daysOfWeek: ['wednesday', 'saturday'] },
-        category: 'garden',
-        icon: '🪴',
-      },
-      {
-        id: 'clean-bathroom',
-        name: 'Clean Bathroom',
-        description: 'Clean sink, mirror, and tidy up bathroom',
-        schedule: { frequency: 'weekly', daysOfWeek: ['saturday'] },
-        category: 'cleaning',
-        icon: '🚿',
-      },
-    ],
-  },
-  {
-    id: 'custom-chores',
-    name: 'Custom Chores',
-    description: 'Start with a blank template and create your own chore chart',
-    type: 'custom',
-    thumbnail: '/templates/custom.png',
-    chores: [],
-    allowCustomChores: true,
-  }
-];
 
 export const ChoreProvider = ({ children }: { children: ReactNode }) => {
   const [templates, setTemplates] = useState<ChoreTemplate[]>(() => {
@@ -222,63 +38,13 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
   
   // Load charts from Supabase when user changes
   useEffect(() => {
-    const fetchCharts = async () => {
+    const loadCharts = async () => {
       if (!user) return;
       
       try {
         setIsLoading(true);
-        const charts = await getChartsFromDb(user.id);
-        
-        // Process the charts from the database
-        const processedCharts: ChoreChart[] = await Promise.all(
-          charts.map(async (chart: any) => {
-            const children = await getChildrenByChartId(chart.id);
-            const chores = await getChoresByChartId(chart.id);
-            
-            // Convert DB chores to app format
-            const appChores: Chore[] = chores.map((dbChore: any) => ({
-              id: dbChore.id,
-              name: dbChore.name,
-              description: dbChore.description,
-              schedule: {
-                frequency: dbChore.frequency as ChoreFrequency,
-                daysOfWeek: dbChore.days_of_week,
-                specificDates: dbChore.specific_dates,
-              },
-              category: dbChore.category,
-              icon: dbChore.icon,
-            }));
-            
-            // Convert DB children to app format
-            const appChildren: Child[] = children.map((dbChild: any) => {
-              // Create a child object with only the properties that exist in the database
-              const child: Child = {
-                id: dbChild.id,
-                name: dbChild.name,
-              };
-              
-              // Check if birthdate exists before trying to use it
-              if ('birthdate' in dbChild && dbChild.birthdate !== null && dbChild.birthdate !== undefined) {
-                child.birthdate = String(dbChild.birthdate);
-              }
-              
-              return child;
-            });
-            
-            return {
-              id: chart.id,
-              name: chart.name,
-              templateId: chart.template_id || '',
-              children: appChildren,
-              assignments: [], // We'll load assignments separately if needed
-              createdAt: chart.created_at,
-              updatedAt: chart.updated_at,
-              customChores: appChores,
-            };
-          })
-        );
-        
-        setCharts(processedCharts);
+        const fetchedCharts = await fetchChartsFromDb(user.id);
+        setCharts(fetchedCharts);
       } catch (error) {
         console.error('Error fetching charts:', error);
         toast({
@@ -291,7 +57,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     
-    fetchCharts();
+    loadCharts();
   }, [user, toast]);
   
   const getTemplateById = (id: string) => {
@@ -308,60 +74,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
       
-      // Create chart in database
-      const dbChart = await createChartInDb({
-        name: chart.name,
-        template_id: chart.templateId,
-        user_id: user?.id,
-      });
-      
-      // Add children to database
-      const dbChildren = await Promise.all(chart.children.map(async (child) => {
-        return await addChildToDb({
-          name: child.name,
-          chart_id: dbChart.id,
-          birthdate: child.birthdate,
-        });
-      }));
-      
-      // Add custom chores if any
-      if (chart.customChores && chart.customChores.length > 0) {
-        await Promise.all(chart.customChores.map(async (chore) => {
-          await addChoreToDb({
-            name: chore.name,
-            description: chore.description,
-            icon: chore.icon,
-            frequency: chore.schedule.frequency,
-            days_of_week: chore.schedule.daysOfWeek,
-            specific_dates: chore.schedule.specificDates,
-            chart_id: dbChart.id,
-            category: chore.category,
-          });
-        }));
-      }
-      
-      // Create response in app format
-      const newChart: ChoreChart = {
-        ...chart,
-        id: dbChart.id,
-        children: dbChildren.map(dbChild => {
-          // Create a child object with only the properties that exist in the database
-          const child: Child = {
-            id: dbChild.id,
-            name: dbChild.name,
-          };
-          
-          // Check if birthdate exists before trying to use it
-          if ('birthdate' in dbChild && dbChild.birthdate !== null && dbChild.birthdate !== undefined) {
-            child.birthdate = String(dbChild.birthdate);
-          }
-          
-          return child;
-        }),
-        createdAt: dbChart.created_at,
-        updatedAt: dbChart.updated_at,
-      };
-      
+      const newChart = await createChartInDatabase(chart, user?.id);
       setCharts(prev => [...prev, newChart]);
       return newChart;
       
@@ -430,7 +143,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
       const chart = getChartById(chartId);
       if (!chart) throw new Error("Chart not found");
       
-      await sendChoreChartEmail(emailTo, `Chore Chart: ${chart.name}`, chart);
+      await sendChoreChartEmailToUser(chartId, emailTo, chart);
       
       toast({
         title: "Email Sent",
@@ -450,7 +163,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
   const getAgeBasedChores = async (age: number) => {
     try {
       setIsLoading(true);
-      const { chores } = await getAgeAppropriateChores(age);
+      const chores = await fetchAgeAppropriateChores(age);
       return chores;
     } catch (error: any) {
       toast({
