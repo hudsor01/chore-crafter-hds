@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -249,11 +250,20 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
             }));
             
             // Convert DB children to app format
-            const appChildren: Child[] = children.map((dbChild: any) => ({
-              id: dbChild.id,
-              name: dbChild.name,
-              birthdate: dbChild.birthdate || undefined,
-            }));
+            const appChildren: Child[] = children.map((dbChild: any) => {
+              // Create a child object with only the properties that exist in the database
+              const child: Child = {
+                id: dbChild.id,
+                name: dbChild.name,
+              };
+              
+              // Only add birthdate if it exists in the database
+              if ('birthdate' in dbChild && dbChild.birthdate !== null) {
+                child.birthdate = dbChild.birthdate;
+              }
+              
+              return child;
+            });
             
             return {
               id: chart.id,
@@ -334,11 +344,20 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
       const newChart: ChoreChart = {
         ...chart,
         id: dbChart.id,
-        children: dbChildren.map(dbChild => ({
-          id: dbChild.id,
-          name: dbChild.name,
-          birthdate: dbChild.birthdate || undefined,
-        })),
+        children: dbChildren.map(dbChild => {
+          // Create a child object with only the properties that exist in the database
+          const child: Child = {
+            id: dbChild.id,
+            name: dbChild.name,
+          };
+          
+          // Only add birthdate if it exists in the database
+          if ('birthdate' in dbChild && dbChild.birthdate !== null) {
+            child.birthdate = dbChild.birthdate;
+          }
+          
+          return child;
+        }),
         createdAt: dbChart.created_at,
         updatedAt: dbChart.updated_at,
       };
