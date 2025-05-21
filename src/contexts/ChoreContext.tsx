@@ -257,9 +257,9 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
                 name: dbChild.name,
               };
               
-              // Only add birthdate if it exists in the database
-              if (dbChild.birthdate) {
-                child.birthdate = dbChild.birthdate as string;
+              // Check if birthdate exists before trying to use it
+              if (dbChild.birthdate !== null && dbChild.birthdate !== undefined) {
+                child.birthdate = String(dbChild.birthdate);
               }
               
               return child;
@@ -351,9 +351,9 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
             name: dbChild.name,
           };
           
-          // Only add birthdate if it exists in the database
-          if (dbChild.birthdate) {
-            child.birthdate = dbChild.birthdate;
+          // Check if birthdate exists before trying to use it
+          if (dbChild.birthdate !== null && dbChild.birthdate !== undefined) {
+            child.birthdate = String(dbChild.birthdate);
           }
           
           return child;
