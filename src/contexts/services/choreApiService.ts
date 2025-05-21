@@ -8,7 +8,8 @@ import {
   getChildrenByChartId,
   getChoresByChartId,
   sendChoreChartEmail,
-  getAgeAppropriateChores
+  getAgeAppropriateChores,
+  DbChore
 } from '@/services/supabaseService';
 
 export const fetchChartsFromDb = async (userId?: string): Promise<ChoreChart[]> => {
@@ -24,7 +25,7 @@ export const fetchChartsFromDb = async (userId?: string): Promise<ChoreChart[]> 
         const chores = await getChoresByChartId(chart.id);
         
         // Convert DB chores to app format
-        const appChores: Chore[] = chores.map((dbChore: any) => ({
+        const appChores: Chore[] = chores.map((dbChore: DbChore) => ({
           id: dbChore.id,
           name: dbChore.name,
           description: dbChore.description,
@@ -151,7 +152,19 @@ export const sendChoreChartEmailToUser = async (chartId: string, emailTo: string
 export const fetchAgeAppropriateChores = async (age: number): Promise<Chore[]> => {
   try {
     const { chores } = await getAgeAppropriateChores(age);
-    return chores;
+    // Convert DB chores to app format
+    return chores.map((dbChore: DbChore) => ({
+      id: dbChore.id,
+      name: dbChore.name,
+      description: dbChore.description,
+      schedule: {
+        frequency: dbChore.frequency as ChoreFrequency,
+        daysOfWeek: dbChore.days_of_week,
+        specificDates: dbChore.specific_dates,
+      },
+      category: dbChore.category,
+      icon: dbChore.icon,
+    }));
   } catch (error) {
     console.error('Error fetching age-appropriate chores:', error);
     throw error;

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { ChoreChart } from '@/contexts/types/choreTypes';
 
@@ -71,7 +72,7 @@ interface DbChild {
   birthdate?: string | null;
 }
 
-interface DbChore {
+export interface DbChore {
   id: string;
   created_at: string;
   name: string;
