@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { ChoreChart, Child, Chore, ChoreAssignment } from "@/contexts/ChoreContext";
 
 // Authentication Functions
 export const signUp = async (email: string, password: string) => {
@@ -37,8 +36,6 @@ export const getSession = async () => {
   if (error) throw error;
   return session;
 };
-
-// Note: Removed user profile functions as they're not in the database yet
 
 // Chart Functions
 export const createChartInDb = async (chart: {
