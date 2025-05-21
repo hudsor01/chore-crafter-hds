@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -253,7 +252,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
             const appChildren: Child[] = children.map((dbChild: any) => ({
               id: dbChild.id,
               name: dbChild.name,
-              birthdate: dbChild.birthdate,
+              birthdate: dbChild.birthdate || undefined,
             }));
             
             return {
@@ -338,7 +337,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
         children: dbChildren.map(dbChild => ({
           id: dbChild.id,
           name: dbChild.name,
-          birthdate: dbChild.birthdate,
+          birthdate: dbChild.birthdate || undefined,
         })),
         createdAt: dbChart.created_at,
         updatedAt: dbChart.updated_at,
@@ -361,6 +360,7 @@ export const ChoreProvider = ({ children }: { children: ReactNode }) => {
         createdAt: now,
         updatedAt: now,
       };
+      setCharts(prev => [...prev, tempChart]);
       return tempChart;
     } finally {
       setIsLoading(false);

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useChores, Child, ChoreTemplate, ChoreAssignment, Chore } from "@/contexts/ChoreContext";
@@ -118,7 +117,7 @@ const CustomizeChart = () => {
     setAssignments(assignments.filter(assignment => assignment.choreId !== choreId));
   };
   
-  const handleSaveChart = () => {
+  const handleSaveChart = async () => {
     if (!template) return;
     
     if (chartName.trim() === "") {
@@ -148,20 +147,29 @@ const CustomizeChart = () => {
       return;
     }
     
-    const newChart = createChart({
-      name: chartName,
-      templateId: template.id,
-      children: children,
-      assignments: assignments,
-      customChores: customChores.length > 0 ? customChores : undefined,
-    });
-    
-    toast({
-      title: "Chart Created!",
-      description: `"${chartName}" has been created successfully.`,
-    });
-    
-    navigate(`/view/${newChart.id}`);
+    try {
+      const newChart = await createChart({
+        name: chartName,
+        templateId: template.id,
+        children: children,
+        assignments: assignments,
+        customChores: customChores.length > 0 ? customChores : undefined,
+      });
+      
+      toast({
+        title: "Chart Created!",
+        description: `"${chartName}" has been created successfully.`,
+      });
+      
+      navigate(`/view/${newChart.id}`);
+    } catch (error) {
+      console.error("Error creating chart:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem creating your chart. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   if (!template) {

@@ -38,29 +38,7 @@ export const getSession = async () => {
   return session;
 };
 
-// User Profile Functions
-export const getUserProfile = async (userId: string) => {
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-export const updateUserProfile = async (userId: string, profile: any) => {
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .update(profile)
-    .eq('user_id', userId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
+// Note: Removed user profile functions as they're not in the database yet
 
 // Chart Functions
 export const createChartInDb = async (chart: {
@@ -127,7 +105,7 @@ export const addChoreToDb = async (chore: {
   icon?: string;
   frequency: string;
   days_of_week?: string[];
-  specific_dates?: string[]; // Changed from Date[] to string[]
+  specific_dates?: string[];
   chart_id: string;
   category?: string;
 }) => {
