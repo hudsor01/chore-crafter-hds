@@ -54,15 +54,16 @@ export const createChartInDb = async (chart: {
 };
 
 // Define a specific interface for the chart data to avoid infinite type instantiation
-interface ChartData {
+export interface ChartData {
   id: string;
   name: string;
-  template_id?: string;
-  user_id?: string;
+  template_id?: string | null;
+  user_id?: string | null;
   created_at: string;
   updated_at: string;
 }
 
+// Explicitly type the returned data to prevent excessive type instantiation
 export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => {
   let query = supabase
     .from('chore_charts')
@@ -76,7 +77,7 @@ export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => 
   const { data, error } = await query;
 
   if (error) throw error;
-  return data || [];
+  return (data || []) as ChartData[];
 };
 
 // Children Functions
