@@ -63,21 +63,37 @@ export interface ChartData {
   updated_at: string;
 }
 
-// Explicitly type the returned data to prevent excessive type instantiation
+// Use a more direct approach to avoid excessive type instantiation
 export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => {
-  let query = supabase
-    .from('chore_charts')
-    .select('*')
-    .order('created_at', { ascending: false });
+  try {
+    let query = supabase
+      .from('chore_charts')
+      .select('*')
+      .order('created_at', { ascending: false });
+      
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
     
-  if (userId) {
-    query = query.eq('user_id', userId);
-  }
-  
-  const { data, error } = await query;
+    const { data, error } = await query;
 
-  if (error) throw error;
-  return (data || []) as ChartData[];
+    if (error) throw error;
+    
+    // Explicitly transform the data to match our interface
+    const chartData: ChartData[] = data ? data.map(chart => ({
+      id: chart.id,
+      name: chart.name,
+      template_id: chart.template_id,
+      user_id: chart.user_id,
+      created_at: chart.created_at,
+      updated_at: chart.updated_at
+    })) : [];
+    
+    return chartData;
+  } catch (error) {
+    console.error("Error fetching charts:", error);
+    throw error;
+  }
 };
 
 // Children Functions
