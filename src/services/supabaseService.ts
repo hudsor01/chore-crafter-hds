@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 // Define the data structure returned from the database - keep it simple to avoid circular references
@@ -26,10 +27,13 @@ export interface DbChore {
 
 export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => {
   try {
-    const { data, error } = await supabase
-      .from('chore_charts')
-      .select('*')
-      .eq('user_id', userId);
+    let query = supabase.from('chore_charts').select('*');
+    
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
+    
+    const { data, error } = await query;
     
     if (error) {
       throw error;
