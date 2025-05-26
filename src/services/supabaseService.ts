@@ -39,7 +39,15 @@ export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => 
       throw error;
     }
     
-    return (data || []) as ChartData[];
+    // Explicitly cast the data to avoid type inference issues
+    return (data as any[])?.map((chart: any) => ({
+      id: chart.id,
+      created_at: chart.created_at,
+      updated_at: chart.updated_at,
+      name: chart.name,
+      template_id: chart.template_id,
+      user_id: chart.user_id,
+    })) || [];
   } catch (error) {
     console.error('Error fetching charts from DB:', error);
     return [];
