@@ -1,8 +1,6 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { ChoreChart, DayOfWeek } from '@/contexts/types/choreTypes';
 
-// Define the data structure returned from the database
+// Define the data structure returned from the database - keep it simple to avoid circular references
 export interface ChartData {
   id: string;
   created_at: string;
@@ -10,6 +8,20 @@ export interface ChartData {
   name: string;
   template_id: string | null;
   user_id?: string | null;
+}
+
+// Export DbChore interface for use in other files
+export interface DbChore {
+  id: string;
+  created_at: string;
+  name: string;
+  description?: string | null;
+  icon?: string | null;
+  frequency: string;
+  days_of_week?: string[] | null;
+  specific_dates?: string[] | null;
+  chart_id: string;
+  category?: string | null;
 }
 
 export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => {
@@ -70,19 +82,6 @@ interface DbChild {
   name: string;
   chart_id: string;
   birthdate?: string | null;
-}
-
-export interface DbChore {
-  id: string;
-  created_at: string;
-  name: string;
-  description?: string | null;
-  icon?: string | null;
-  frequency: string;
-  days_of_week?: string[] | null;
-  specific_dates?: string[] | null;
-  chart_id: string;
-  category?: string | null;
 }
 
 export const createChartInDb = async (chartData: CreateChartData): Promise<DbChart> => {
