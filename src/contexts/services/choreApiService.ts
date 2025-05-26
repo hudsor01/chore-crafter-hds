@@ -76,14 +76,14 @@ export const fetchChartsFromDb = async (userId?: string): Promise<ChoreChart[]> 
 
 export const createChartInDatabase = async (
   chart: Omit<ChoreChart, 'id' | 'createdAt' | 'updatedAt'>,
-  userId?: string | null
+  userId: string
 ): Promise<ChoreChart> => {
   try {
-    // Create chart in database
+    // Create chart in database with required user_id
     const dbChart = await createChartInDb({
       name: chart.name,
       template_id: chart.templateId,
-      user_id: userId || undefined,
+      user_id: userId,
     });
     
     // Add children to database

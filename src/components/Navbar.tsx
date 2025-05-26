@@ -1,13 +1,26 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calendar, Menu, Check, X } from "lucide-react";
+import { Calendar, Menu, Check, X, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <header className="bg-white shadow-md">
@@ -45,6 +58,38 @@ const Navbar = () => {
                     >
                       Chore Templates
                     </Link>
+                    {user ? (
+                      <>
+                        <Link 
+                          to="/dashboard" 
+                          className="px-4 py-2 hover:bg-gray-100"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                        <Link 
+                          to="/profile" 
+                          className="px-4 py-2 hover:bg-gray-100"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Profile
+                        </Link>
+                        <button 
+                          onClick={handleSignOut}
+                          className="px-4 py-2 hover:bg-gray-100 text-left"
+                        >
+                          Sign Out
+                        </button>
+                      </>
+                    ) : (
+                      <Link 
+                        to="/auth" 
+                        className="px-4 py-2 hover:bg-gray-100"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Sign In
+                      </Link>
+                    )}
                   </nav>
                 </div>
               )}
@@ -53,11 +98,44 @@ const Navbar = () => {
             <nav className="flex items-center space-x-4">
               <Link to="/" className="text-gray-600 hover:text-blue-600">Home</Link>
               <Link to="/templates" className="text-gray-600 hover:text-blue-600">Chore Templates</Link>
-              <Button asChild>
-                <Link to="/templates">
-                  <Check className="mr-2 h-4 w-4" /> Create Chart
-                </Link>
-              </Button>
+              
+              {user ? (
+                <>
+                  <Link to="/dashboard" className="text-gray-600 hover:text-blue-600">Dashboard</Link>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <User className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile">
+                          <User className="mr-2 h-4 w-4" />
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleSignOut}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <Button asChild variant="outline">
+                    <Link to="/auth">Sign In</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link to="/templates">
+                      <Check className="mr-2 h-4 w-4" /> Create Chart
+                    </Link>
+                  </Button>
+                </>
+              )}
             </nav>
           )}
         </div>

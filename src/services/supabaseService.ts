@@ -8,7 +8,7 @@ export interface ChartData {
   updated_at: string;
   name: string;
   template_id: string | null;
-  user_id?: string | null;
+  user_id: string | null;
 }
 
 // Export DbChore interface for use in other files
@@ -39,8 +39,8 @@ export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => 
       throw error;
     }
     
-    // Explicitly cast the data to avoid type inference issues
-    return (data as any[])?.map((chart: any) => ({
+    // Explicitly map the data to avoid type inference issues
+    return data?.map(chart => ({
       id: chart.id,
       created_at: chart.created_at,
       updated_at: chart.updated_at,
@@ -58,7 +58,7 @@ export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => 
 interface CreateChartData {
   name: string;
   template_id: string | null;
-  user_id?: string | null;
+  user_id: string;
 }
 
 interface AddChildData {

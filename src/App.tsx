@@ -13,7 +13,8 @@ import ViewChart from "./pages/ViewChart";
 import Layout from "./components/Layout";
 import Auth from "./pages/Auth";
 import ParentDashboard from "./components/ParentDashboard";
-import { useAuth } from "./contexts/AuthContext";
+import UserProfile from "./components/UserProfile";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +32,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
-const App = () => {
+const AppContent = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const { user } = useAuth();
 
@@ -49,35 +50,53 @@ const App = () => {
   }, []);
 
   return (
+    <>
+      {!isOnline && (
+        <div className="fixed top-0 left-0 right-0 bg-amber-500 text-white p-2 text-center z-50">
+          You are currently offline. The app will continue to work, but some features may be limited.
+        </div>
+      )}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={user ? <Navigate to="/dashboard" /> : <Index />} />
+            <Route path="auth" element={<Auth />} />
+            <Route path="templates" element={<ChoreTemplates />} />
+            <Route path="customize/:templateId" element={<CustomizeChart />} />
+            <Route path="view/:chartId" element={<ViewChart />} />
+            <Route 
+              path="dashboard" 
+              element={
+                <ProtectedRoute>
+                  <ParentDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="profile" 
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
+};
+
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        {!isOnline && (
-          <div className="fixed top-0 left-0 right-0 bg-amber-500 text-white p-2 text-center z-50">
-            You are currently offline. The app will continue to work, but some features may be limited.
-          </div>
-        )}
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={user ? <Navigate to="/dashboard" /> : <Index />} />
-              <Route path="auth" element={<Auth />} />
-              <Route path="templates" element={<ChoreTemplates />} />
-              <Route path="customize/:templateId" element={<CustomizeChart />} />
-              <Route path="view/:chartId" element={<ViewChart />} />
-              <Route 
-                path="dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <ParentDashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <AppContent />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

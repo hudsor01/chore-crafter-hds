@@ -81,6 +81,7 @@ export type Database = {
           name: string
           template_id: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -88,6 +89,7 @@ export type Database = {
           name: string
           template_id?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -95,6 +97,7 @@ export type Database = {
           name?: string
           template_id?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -144,6 +147,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          email_notifications: boolean | null
+          full_name: string | null
+          id: string
+          theme_preference: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_notifications?: boolean | null
+          full_name?: string | null
+          id: string
+          theme_preference?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_notifications?: boolean | null
+          full_name?: string | null
+          id?: string
+          theme_preference?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
