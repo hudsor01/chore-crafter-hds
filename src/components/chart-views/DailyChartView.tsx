@@ -1,7 +1,7 @@
 
 import { Chore, Child, ChoreAssignment } from "@/models/ChoreTypes";
 import { Button } from "@/components/ui/button";
-import { Check, X, Star } from "lucide-react";
+import { Check, Star } from "lucide-react";
 import { useChoreCompletions } from "@/hooks/useChoreCompletions";
 
 type DailyChartViewProps = {
@@ -124,15 +124,14 @@ export const DailyChartView = ({
                               onClick={() => handleVerifyCompletion(chore.id, child.id)}
                               disabled={isLoading}
                               className="w-6 h-6 p-0 text-yellow-500 hover:text-yellow-600"
-                              title="Verify completion"
                             >
                               <Star className="h-3 w-3" />
                             </Button>
                           )}
                           
                           {isVerified && (
-                            <div title="Verified by parent">
-                              <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                            <div className="text-yellow-500" aria-label="Verified by parent">
+                              <Star className="h-4 w-4 fill-current" />
                             </div>
                           )}
                         </div>

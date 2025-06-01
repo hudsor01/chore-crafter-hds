@@ -2,41 +2,27 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChores } from '@/contexts/ChoreContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Mail, RefreshCw, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Child } from '@/contexts/ChoreContext';
-import { useRealtimeSync } from '@/hooks/useRealtimeSync';
+import { useChartData } from '@/hooks/useChartData';
 import AgeBasedSuggestions from './AgeBasedSuggestions';
+import { StatsCards } from './dashboard/StatsCards';
+import { ChartCard } from './dashboard/ChartCard';
+import { EmailChartDialog } from './dashboard/EmailChartDialog';
 
 const ParentDashboard = () => {
   const { user } = useAuth();
-  const { charts, isLoading, emailChoreChart, rotateChores } = useChores();
+  const { emailChoreChart, rotateChores } = useChores();
+  const { charts, isLoading } = useChartData(user?.id);
   const [emailTo, setEmailTo] = useState('');
   const [selectedChartId, setSelectedChartId] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
-  const [isRealtimeEnabled] = useState(true);
   const navigate = useNavigate();
-
-  // Enable real-time sync
-  useRealtimeSync(() => {
-    // This will trigger a refetch when data changes
-    console.log('Data changed, dashboard should update');
-  });
 
   // Calculate child ages from birthdate
   const calculateAge = (birthdate: string) => {
@@ -59,6 +45,7 @@ const ParentDashboard = () => {
     await emailChoreChart(selectedChartId, emailTo);
     setIsDialogOpen(false);
     setEmailTo('');
+    setSelectedChartId('');
   };
 
   // Handler for chore rotation
@@ -82,71 +69,24 @@ const ParentDashboard = () => {
   }
 
   if (!user) {
-    return null; // Will redirect in useEffect
+    return null;
   }
 
   return (
     <div className="container mx-auto px-4 py-4 lg:py-8 max-w-7xl">
       <div className="mb-6">
         <h1 className="text-2xl lg:text-3xl font-bold mb-2">Parent Dashboard</h1>
-        {isRealtimeEnabled && (
-          <div className="flex items-center text-sm text-green-600">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-            Live sync enabled
-          </div>
-        )}
+        <div className="flex items-center text-sm text-green-600">
+          <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+          Live sync enabled
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Charts</CardTitle>
-            <CardDescription>Active charts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{charts.length}</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Children</CardTitle>
-            <CardDescription>Across all charts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {charts.reduce((total, chart) => total + chart.children.length, 0)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Total Chores</CardTitle>
-            <CardDescription>Custom chores</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {charts.reduce((total, chart) => total + (chart.customChores?.length || 0), 0)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
-            <CardDescription>Get started</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button 
-              onClick={() => navigate('/templates')} 
-              className="w-full"
-              size="sm"
-            >
-              Create New Chart
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="mb-6">
+        <StatsCards 
+          charts={charts} 
+          onCreateChart={() => navigate('/templates')} 
+        />
       </div>
       
       <Tabs defaultValue="charts" className="w-full">
@@ -162,84 +102,16 @@ const ParentDashboard = () => {
           {charts.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {charts.map(chart => (
-                <Card key={chart.id}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg truncate">{chart.name}</CardTitle>
-                    <CardDescription>
-                      Created {new Date(chart.createdAt).toLocaleDateString()}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="text-gray-500">Children:</span>
-                        <span className="ml-1 font-medium">{chart.children.length}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Chores:</span>
-                        <span className="ml-1 font-medium">{chart.customChores?.length || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => navigate(`/view/${chart.id}`)}
-                        className="flex-1 min-w-[70px]"
-                      >
-                        View
-                      </Button>
-                      
-                      <Dialog open={isDialogOpen && selectedChartId === chart.id} onOpenChange={(open) => {
-                        setIsDialogOpen(open);
-                        if (open) setSelectedChartId(chart.id);
-                      }}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="px-2">
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Email Chore Chart</DialogTitle>
-                            <DialogDescription>
-                              Send this chart to a parent or child.
-                            </DialogDescription>
-                          </DialogHeader>
-                          
-                          <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="email">Email address</Label>
-                              <Input
-                                id="email"
-                                type="email"
-                                placeholder="Enter recipient email"
-                                value={emailTo}
-                                onChange={(e) => setEmailTo(e.target.value)}
-                              />
-                            </div>
-                          </div>
-                          
-                          <DialogFooter>
-                            <Button onClick={handleSendEmail} disabled={!emailTo}>
-                              Send Email
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                      
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleRotateChores(chart.id)}
-                        className="px-2"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <ChartCard
+                  key={chart.id}
+                  chart={chart}
+                  onView={() => navigate(`/view/${chart.id}`)}
+                  onEmail={() => {
+                    setSelectedChartId(chart.id);
+                    setIsDialogOpen(true);
+                  }}
+                  onRotate={() => handleRotateChores(chart.id)}
+                />
               ))}
             </div>
           ) : (
@@ -263,24 +135,18 @@ const ParentDashboard = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {charts.flatMap(chart => chart.children).map((child, index) => (
-              <Card key={`${child.id}-${index}`} className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => setSelectedChild(child)}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">{child.name}</CardTitle>
+              <Card key={`${child.id}-${index}`} className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-semibold">{child.name}</h3>
                   {child.birthdate && (
-                    <CardDescription>
+                    <p className="text-sm text-gray-500 mb-3">
                       Age: {calculateAge(child.birthdate)} years
-                    </CardDescription>
+                    </p>
                   )}
-                </CardHeader>
-                <CardContent>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedChild(child);
-                    }}
+                    onClick={() => setSelectedChild(child)}
                     disabled={!child.birthdate}
                     className="w-full"
                   >
@@ -301,7 +167,6 @@ const ParentDashboard = () => {
               child={selectedChild}
               onAddChore={(chore) => {
                 console.log('Add chore to chart:', chore);
-                // TODO: Implement adding chore to chart
               }}
             />
           ) : (
@@ -315,6 +180,18 @@ const ParentDashboard = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      <EmailChartDialog
+        isOpen={isDialogOpen}
+        onClose={() => {
+          setIsDialogOpen(false);
+          setSelectedChartId('');
+          setEmailTo('');
+        }}
+        onSend={handleSendEmail}
+        email={emailTo}
+        onEmailChange={setEmailTo}
+      />
     </div>
   );
 };
