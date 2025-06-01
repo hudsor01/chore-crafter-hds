@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useChores } from "@/contexts/ChoreContext";
@@ -13,6 +12,7 @@ import { CustomChoresManager } from "@/components/chart-customizer/CustomChoresM
 import { ChoreAssignmentManager } from "@/components/chart-customizer/ChoreAssignmentManager";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { DragDropChoreAssignment } from "@/components/chart-customizer/DragDropChoreAssignment";
 
 const CustomizeChart = () => {
   const { templateId } = useParams<{ templateId: string }>();
@@ -253,13 +253,19 @@ const CustomizeChart = () => {
         </TabsContent>
         
         <TabsContent value="assign" className="space-y-4">
-          <ChoreAssignmentManager
-            children={children}
-            allChores={allChores}
-            assignments={assignments}
-            setAssignments={setAssignments}
-            setActiveTab={setActiveTab}
-          />
+          <div className="space-y-4">
+            <div className="text-center">
+              <h2 className="text-xl font-bold mb-2">Assign Chores</h2>
+              <p className="text-gray-600 mb-4">Drag chores from the available list to assign them to children</p>
+            </div>
+            
+            <DragDropChoreAssignment
+              children={children}
+              allChores={allChores}
+              assignments={assignments}
+              setAssignments={setAssignments}
+            />
+          </div>
         </TabsContent>
       </Tabs>
       

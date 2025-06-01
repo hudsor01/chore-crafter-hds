@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChores } from '@/contexts/ChoreContext';
@@ -13,6 +12,9 @@ import AgeBasedSuggestions from './AgeBasedSuggestions';
 import { StatsCards } from './dashboard/StatsCards';
 import { ChartCard } from './dashboard/ChartCard';
 import { EmailChartDialog } from './dashboard/EmailChartDialog';
+import { SiblingLeaderboard } from './dashboard/SiblingLeaderboard';
+import { ExportData } from './dashboard/ExportData';
+import { useChoreCompletions } from '@/hooks/useChoreCompletions';
 
 const ParentDashboard = () => {
   const { user } = useAuth();
@@ -60,6 +62,8 @@ const ParentDashboard = () => {
     }
   }, [user, isLoading, navigate]);
 
+  const { completions } = useChoreCompletions(charts.map(c => c.id));
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -90,9 +94,11 @@ const ParentDashboard = () => {
       </div>
       
       <Tabs defaultValue="charts" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:grid-cols-3">
+        <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
           <TabsTrigger value="charts">Charts</TabsTrigger>
           <TabsTrigger value="children">Children</TabsTrigger>
+          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
+          <TabsTrigger value="exports">Export</TabsTrigger>
           <TabsTrigger value="suggestions">AI Suggestions</TabsTrigger>
         </TabsList>
         
@@ -157,6 +163,22 @@ const ParentDashboard = () => {
               </Card>
             ))}
           </div>
+        </TabsContent>
+        
+        <TabsContent value="leaderboard" className="mt-4">
+          <h2 className="text-xl font-bold mb-4">Family Competition</h2>
+          <SiblingLeaderboard 
+            children={charts.flatMap(chart => chart.children)}
+            completions={completions}
+          />
+        </TabsContent>
+        
+        <TabsContent value="exports" className="mt-4">
+          <h2 className="text-xl font-bold mb-4">Export Your Data</h2>
+          <ExportData 
+            charts={charts}
+            completions={completions}
+          />
         </TabsContent>
         
         <TabsContent value="suggestions" className="mt-4">
