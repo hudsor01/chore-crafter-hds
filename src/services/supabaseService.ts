@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Define the data structure returned from the database - keep it simple to avoid circular references
@@ -316,7 +315,7 @@ interface AgeAppropriateChoresResponse {
 
 export const getAgeAppropriateChores = async (age: number): Promise<AgeAppropriateChoresResponse> => {
   try {
-    const { data, error } = await supabase.functions.invoke('get-age-appropriate-chores', {
+    const { data, error } = await supabase.functions.invoke('chore-suggestions', {
       body: { age },
     });
     
