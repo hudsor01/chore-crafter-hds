@@ -19,16 +19,24 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Child } from '@/contexts/ChoreContext';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
+import AgeBasedSuggestions from './AgeBasedSuggestions';
 
 const ParentDashboard = () => {
   const { user } = useAuth();
-  const { charts, isLoading, emailChoreChart, getAgeBasedChores, rotateChores } = useChores();
+  const { charts, isLoading, emailChoreChart, rotateChores } = useChores();
   const [emailTo, setEmailTo] = useState('');
   const [selectedChartId, setSelectedChartId] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  const [isRealtimeEnabled] = useState(true);
   const navigate = useNavigate();
+
+  // Enable real-time sync
+  useRealtimeSync(() => {
+    // This will trigger a refetch when data changes
+    console.log('Data changed, dashboard should update');
+  });
 
   // Calculate child ages from birthdate
   const calculateAge = (birthdate: string) => {
@@ -51,22 +59,6 @@ const ParentDashboard = () => {
     await emailChoreChart(selectedChartId, emailTo);
     setIsDialogOpen(false);
     setEmailTo('');
-  };
-
-  // Handler for generating age-appropriate chore suggestions
-  const handleGenerateSuggestions = async (child: Child) => {
-    if (!child.birthdate) return;
-    
-    try {
-      setIsGenerating(true);
-      const age = calculateAge(child.birthdate);
-      const chores = await getAgeBasedChores(age);
-      setSuggestions(chores);
-    } catch (error) {
-      console.error("Error getting suggestions:", error);
-    } finally {
-      setIsGenerating(false);
-    }
   };
 
   // Handler for chore rotation
@@ -94,41 +86,71 @@ const ParentDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Parent Dashboard</h1>
+    <div className="container mx-auto px-4 py-4 lg:py-8 max-w-7xl">
+      <div className="mb-6">
+        <h1 className="text-2xl lg:text-3xl font-bold mb-2">Parent Dashboard</h1>
+        {isRealtimeEnabled && (
+          <div className="flex items-center text-sm text-green-600">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+            Live sync enabled
+          </div>
+        )}
+      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Charts Overview</CardTitle>
-            <CardDescription>
-              Summary of all your chore charts
-            </CardDescription>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Charts</CardTitle>
+            <CardDescription>Active charts</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{charts.length}</p>
-            <p className="text-gray-500">Total Active Charts</p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader>
-            <CardTitle>Children</CardTitle>
-            <CardDescription>
-              Children across all charts
-            </CardDescription>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Children</CardTitle>
+            <CardDescription>Across all charts</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
               {charts.reduce((total, chart) => total + chart.children.length, 0)}
             </p>
-            <p className="text-gray-500">Total Children</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Total Chores</CardTitle>
+            <CardDescription>Custom chores</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {charts.reduce((total, chart) => total + (chart.customChores?.length || 0), 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Quick Actions</CardTitle>
+            <CardDescription>Get started</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => navigate('/templates')} 
+              className="w-full"
+              size="sm"
+            >
+              Create New Chart
+            </Button>
           </CardContent>
         </Card>
       </div>
       
       <Tabs defaultValue="charts" className="w-full">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:grid-cols-3">
           <TabsTrigger value="charts">Charts</TabsTrigger>
           <TabsTrigger value="children">Children</TabsTrigger>
           <TabsTrigger value="suggestions">AI Suggestions</TabsTrigger>
@@ -138,24 +160,33 @@ const ParentDashboard = () => {
           <h2 className="text-xl font-bold mb-4">Your Chore Charts</h2>
           
           {charts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {charts.map(chart => (
                 <Card key={chart.id}>
-                  <CardHeader>
-                    <CardTitle>{chart.name}</CardTitle>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg truncate">{chart.name}</CardTitle>
                     <CardDescription>
-                      Created on {new Date(chart.createdAt).toLocaleDateString()}
+                      Created {new Date(chart.createdAt).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="mb-2">Children: {chart.children.length}</p>
-                    <p className="mb-4">Chores: {chart.customChores?.length || 0}</p>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-500">Children:</span>
+                        <span className="ml-1 font-medium">{chart.children.length}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Chores:</span>
+                        <span className="ml-1 font-medium">{chart.customChores?.length || 0}</span>
+                      </div>
+                    </div>
                     
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button 
                         variant="outline" 
                         size="sm"
                         onClick={() => navigate(`/view/${chart.id}`)}
+                        className="flex-1 min-w-[70px]"
                       >
                         View
                       </Button>
@@ -165,8 +196,8 @@ const ParentDashboard = () => {
                         if (open) setSelectedChartId(chart.id);
                       }}>
                         <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <Mail className="mr-1 h-4 w-4" /> Email
+                          <Button variant="outline" size="sm" className="px-2">
+                            <Mail className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -202,8 +233,9 @@ const ParentDashboard = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleRotateChores(chart.id)}
+                        className="px-2"
                       >
-                        <RefreshCw className="mr-1 h-4 w-4" /> Rotate
+                        <RefreshCw className="h-4 w-4" />
                       </Button>
                     </div>
                   </CardContent>
@@ -213,10 +245,10 @@ const ParentDashboard = () => {
           ) : (
             <Card>
               <CardContent className="py-8">
-                <p className="text-center text-gray-500">
+                <p className="text-center text-gray-500 mb-4">
                   You haven't created any charts yet.
                 </p>
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center">
                   <Button onClick={() => navigate('/templates')}>
                     Create Your First Chart
                   </Button>
@@ -231,9 +263,10 @@ const ParentDashboard = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {charts.flatMap(chart => chart.children).map((child, index) => (
-              <Card key={`${child.id}-${index}`}>
-                <CardHeader>
-                  <CardTitle>{child.name}</CardTitle>
+              <Card key={`${child.id}-${index}`} className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => setSelectedChild(child)}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">{child.name}</CardTitle>
                   {child.birthdate && (
                     <CardDescription>
                       Age: {calculateAge(child.birthdate)} years
@@ -244,11 +277,15 @@ const ParentDashboard = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => child.birthdate && handleGenerateSuggestions(child)}
-                    disabled={!child.birthdate || isGenerating}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedChild(child);
+                    }}
+                    disabled={!child.birthdate}
+                    className="w-full"
                   >
-                    <Sparkles className="mr-1 h-4 w-4" />
-                    Get Age-Appropriate Chores
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Get Suggestions
                   </Button>
                 </CardContent>
               </Card>
@@ -259,29 +296,14 @@ const ParentDashboard = () => {
         <TabsContent value="suggestions" className="mt-4">
           <h2 className="text-xl font-bold mb-4">AI Chore Suggestions</h2>
           
-          {suggestions.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {suggestions.map((chore, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      {chore.icon && <span className="mr-2">{chore.icon}</span>}
-                      {chore.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-500">{chore.description}</p>
-                    {chore.category && (
-                      <div className="mt-2">
-                        <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full">
-                          {chore.category}
-                        </span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          {selectedChild ? (
+            <AgeBasedSuggestions 
+              child={selectedChild}
+              onAddChore={(chore) => {
+                console.log('Add chore to chart:', chore);
+                // TODO: Implement adding chore to chart
+              }}
+            />
           ) : (
             <Card>
               <CardContent className="py-8">

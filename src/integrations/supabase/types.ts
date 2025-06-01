@@ -11,18 +11,21 @@ export type Database = {
     Tables: {
       children: {
         Row: {
+          birthdate: string | null
           chart_id: string | null
           created_at: string | null
           id: string
           name: string
         }
         Insert: {
+          birthdate?: string | null
           chart_id?: string | null
           created_at?: string | null
           id?: string
           name: string
         }
         Update: {
+          birthdate?: string | null
           chart_id?: string | null
           created_at?: string | null
           id?: string
@@ -100,6 +103,51 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      chore_completions: {
+        Row: {
+          child_id: string
+          chore_id: string
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          verified_by_parent: boolean | null
+        }
+        Insert: {
+          child_id: string
+          chore_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          verified_by_parent?: boolean | null
+        }
+        Update: {
+          child_id?: string
+          chore_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          verified_by_parent?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chore_completions_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chore_completions_chore_id_fkey"
+            columns: ["chore_id"]
+            isOneToOne: false
+            referencedRelation: "chores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       chores: {
         Row: {

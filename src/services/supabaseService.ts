@@ -25,6 +25,17 @@ export interface DbChore {
   category?: string | null;
 }
 
+// Export DbChoreCompletion interface
+export interface DbChoreCompletion {
+  id: string;
+  chore_id: string;
+  child_id: string;
+  completed_at: string;
+  notes?: string | null;
+  verified_by_parent: boolean;
+  created_at: string;
+}
+
 export const getChartsFromDb = async (userId?: string): Promise<ChartData[]> => {
   try {
     let query = supabase.from('chore_charts').select('*');
@@ -76,6 +87,13 @@ interface AddChoreData {
   specific_dates?: string[] | null;
   chart_id: string;
   category?: string | null;
+}
+
+interface CreateChoreCompletionData {
+  chore_id: string;
+  child_id: string;
+  notes?: string | null;
+  verified_by_parent?: boolean;
 }
 
 // Types for the data being returned from the database
@@ -149,6 +167,90 @@ export const addChoreToDb = async (choreData: AddChoreData): Promise<DbChore> =>
     return data as DbChore;
   } catch (error) {
     console.error('Error adding chore to DB:', error);
+    throw error;
+  }
+};
+
+export const createChoreCompletion = async (completionData: CreateChoreCompletionData): Promise<DbChoreCompletion> => {
+  try {
+    const { data, error } = await supabase
+      .from('chore_completions')
+      .insert([completionData])
+      .select()
+      .single();
+    
+    if (error) {
+      throw error;
+    }
+    
+    return data as DbChoreCompletion;
+  } catch (error) {
+    console.error('Error creating chore completion:', error);
+    throw error;
+  }
+};
+
+export const getChoreCompletions = async (chartId: string): Promise<DbChoreCompletion[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('chore_completions')
+      .select(`
+        *,
+        chores!inner(chart_id)
+      `)
+      .eq('chores.chart_id', chartId);
+    
+    if (error) {
+      throw error;
+    }
+    
+    return (data || []).map(item => ({
+      id: item.id,
+      chore_id: item.chore_id,
+      child_id: item.child_id,
+      completed_at: item.completed_at,
+      notes: item.notes,
+      verified_by_parent: item.verified_by_parent,
+      created_at: item.created_at,
+    }));
+  } catch (error) {
+    console.error('Error fetching chore completions:', error);
+    return [];
+  }
+};
+
+export const updateChoreCompletion = async (completionId: string, updates: Partial<CreateChoreCompletionData>): Promise<DbChoreCompletion> => {
+  try {
+    const { data, error } = await supabase
+      .from('chore_completions')
+      .update(updates)
+      .eq('id', completionId)
+      .select()
+      .single();
+    
+    if (error) {
+      throw error;
+    }
+    
+    return data as DbChoreCompletion;
+  } catch (error) {
+    console.error('Error updating chore completion:', error);
+    throw error;
+  }
+};
+
+export const deleteChoreCompletion = async (completionId: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('chore_completions')
+      .delete()
+      .eq('id', completionId);
+    
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error deleting chore completion:', error);
     throw error;
   }
 };

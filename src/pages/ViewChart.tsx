@@ -12,6 +12,7 @@ import { WeeklyChartView } from "@/components/chart-views/WeeklyChartView";
 import { CustomChartView } from "@/components/chart-views/CustomChartView";
 import { ChartActionBar } from "@/components/chart-views/ChartActionBar";
 import { ChartDetails } from "@/components/chart-views/ChartDetails";
+import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 
 const ViewChart = () => {
   const { chartId } = useParams<{ chartId: string }>();
@@ -23,6 +24,17 @@ const ViewChart = () => {
   const [template, setTemplate] = useState<any>(null);
   
   const chartRef = useRef<HTMLDivElement>(null);
+
+  // Enable real-time sync for this chart
+  useRealtimeSync(() => {
+    // Refresh chart data when changes occur
+    if (chartId) {
+      const updatedChart = getChartById(chartId);
+      if (updatedChart) {
+        setChart(updatedChart);
+      }
+    }
+  });
   
   useEffect(() => {
     if (!chartId) {
@@ -106,6 +118,7 @@ const ViewChart = () => {
           chores={template.chores} 
           children={chart.children}
           assignments={chart.assignments}
+          chartId={chart.id}
         />;
       case 'weekly':
         return <WeeklyChartView 
@@ -123,13 +136,20 @@ const ViewChart = () => {
   };
   
   if (!chart || !template) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p>Loading chart...</p>
+        </div>
+      </div>
+    );
   }
   
   return (
-    <div className="space-y-6 print:p-0">
+    <div className="space-y-4 lg:space-y-6 print:p-0 px-4 lg:px-0">
       <ChartActionBar
-        onBack={() => navigate('/')}
+        onBack={() => navigate('/dashboard')}
         onPrint={handlePrint}
         onDownloadPdf={handleGeneratePdf}
         onCreateSimilar={() => navigate(`/customize/${template.id}`)}
@@ -144,15 +164,15 @@ const ViewChart = () => {
       
       <div className="print:hidden">
         <Tabs defaultValue="preview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="preview">Live Chart</TabsTrigger>
             <TabsTrigger value="details">Details</TabsTrigger>
           </TabsList>
           
           <TabsContent value="preview">
             <Card>
-              <CardContent className="p-6">
-                <div ref={chartRef} className="p-4 bg-white border print:border-0 rounded-lg">
+              <CardContent className="p-4 lg:p-6">
+                <div ref={chartRef} className="p-2 lg:p-4 bg-white border print:border-0 rounded-lg overflow-x-auto">
                   {renderChoreChart()}
                 </div>
               </CardContent>
