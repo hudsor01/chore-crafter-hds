@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -26,6 +25,7 @@ export const ExportData = ({ charts, completions }: ExportDataProps) => {
   const exportToPDF = () => {
     try {
       const doc = new jsPDF();
+      let yPosition = 70;
       
       // Title
       doc.setFontSize(20);
@@ -48,10 +48,13 @@ export const ExportData = ({ charts, completions }: ExportDataProps) => {
       doc.autoTable({
         head: [['Chart Name', 'Children', 'Chores', 'Created']],
         body: chartData,
-        startY: 70,
+        startY: yPosition,
         theme: 'grid',
         headStyles: { fillColor: [139, 69, 19] }
       });
+      
+      // Update Y position after first table
+      yPosition = (doc as any).previousAutoTable.finalY + 20;
       
       // Completions table
       if (completions.length > 0) {
@@ -65,7 +68,7 @@ export const ExportData = ({ charts, completions }: ExportDataProps) => {
         doc.autoTable({
           head: [['Child ID', 'Chore ID', 'Completed', 'Verified']],
           body: completionData,
-          startY: doc.lastAutoTable.finalY + 20,
+          startY: yPosition,
           theme: 'grid',
           headStyles: { fillColor: [139, 69, 19] }
         });

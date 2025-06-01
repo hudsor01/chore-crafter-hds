@@ -62,7 +62,9 @@ const ParentDashboard = () => {
     }
   }, [user, isLoading, navigate]);
 
-  const { completions } = useChoreCompletions(charts.map(c => c.id));
+  // Get the first chart ID for completions, or empty string if no charts
+  const firstChartId = charts.length > 0 ? charts[0].id : '';
+  const { completions } = useChoreCompletions(firstChartId);
 
   if (isLoading) {
     return (
