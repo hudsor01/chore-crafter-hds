@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,7 +35,6 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
 const AppContent = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const { user } = useAuth();
 
   useEffect(() => {
     const handleOnlineStatus = () => setIsOnline(true);
@@ -59,7 +59,7 @@ const AppContent = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={user ? <Navigate to="/dashboard" /> : <Index />} />
+            <Route index element={<Index />} />
             <Route path="auth" element={<Auth />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="templates" element={<ChoreTemplates />} />
