@@ -1,15 +1,12 @@
 
-import { useState } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { Chore, ChoreFrequency, ChoreSchedule, DayOfWeek } from "@/contexts/ChoreContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
-import { Emoji } from "./Emoji";
+import { BasicFields, FrequencyField } from "./chore-form/FormFields";
 
 type AddCustomChoreFormProps = {
   onAddChore: (chore: Omit<Chore, "id">) => void;
@@ -44,7 +41,67 @@ const COMMON_EMOJI_CHOICES = [
   { emoji: "🧩", name: "Puzzle" },
 ];
 
-export function AddCustomChoreForm({ onAddChore, onCancel }: AddCustomChoreFormProps) {
+const DaySelector = memo(({ selectedDays, onDayToggle }: { 
+  selectedDays: DayOfWeek[]; 
+  onDayToggle: (day: DayOfWeek) => void; 
+}) => (
+  <div className="space-y-2">
+    <Label>Days of Week</Label>
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+      {DAYS_OF_WEEK.map((day) => (
+        <div
+          key={day.value}
+          className="flex items-center space-x-2 rounded-md border border-purple-100 p-2"
+        >
+          <Checkbox
+            id={`day-${day.value}`}
+            checked={selectedDays.includes(day.value)}
+            onCheckedChange={() => onDayToggle(day.value)}
+            className="border-purple-300 text-purple-600 data-[state=checked]:bg-purple-600"
+          />
+          <Label
+            htmlFor={`day-${day.value}`}
+            className="cursor-pointer"
+          >
+            {day.label}
+          </Label>
+        </div>
+      ))}
+    </div>
+  </div>
+));
+
+DaySelector.displayName = 'DaySelector';
+
+const EmojiSelector = memo(({ selectedEmoji, onEmojiSelect }: { 
+  selectedEmoji: string; 
+  onEmojiSelect: (emoji: string) => void; 
+}) => (
+  <div className="space-y-2">
+    <Label>Choose an Icon</Label>
+    <div className="grid grid-cols-5 gap-2 sm:grid-cols-7 md:grid-cols-10">
+      {COMMON_EMOJI_CHOICES.map((emojiChoice) => (
+        <button
+          key={emojiChoice.emoji}
+          type="button"
+          className={`rounded-md p-3 text-2xl hover:bg-purple-100 transition-colors ${
+            selectedEmoji === emojiChoice.emoji
+              ? "bg-purple-200"
+              : "bg-white"
+          }`}
+          onClick={() => onEmojiSelect(emojiChoice.emoji)}
+          title={emojiChoice.name}
+        >
+          {emojiChoice.emoji}
+        </button>
+      ))}
+    </div>
+  </div>
+));
+
+EmojiSelector.displayName = 'EmojiSelector';
+
+export const AddCustomChoreForm = memo(({ onAddChore, onCancel }: AddCustomChoreFormProps) => {
   const [choreName, setChoreName] = useState("");
   const [choreDescription, setChoreDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -52,15 +109,15 @@ export function AddCustomChoreForm({ onAddChore, onCancel }: AddCustomChoreFormP
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>([]);
   const [selectedEmoji, setSelectedEmoji] = useState("🧹");
 
-  const handleDayToggle = (day: DayOfWeek) => {
+  const handleDayToggle = useCallback((day: DayOfWeek) => {
     setSelectedDays((current) =>
       current.includes(day)
         ? current.filter((d) => d !== day)
         : [...current, day]
     );
-  };
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     if (!choreName.trim()) {
@@ -101,7 +158,7 @@ export function AddCustomChoreForm({ onAddChore, onCancel }: AddCustomChoreFormP
     setFrequency("daily");
     setSelectedDays([]);
     setSelectedEmoji("🧹");
-  };
+  }, [choreName, choreDescription, category, frequency, selectedDays, selectedEmoji, onAddChore]);
 
   return (
     <Card className="border-purple-200 shadow-md">
@@ -110,105 +167,31 @@ export function AddCustomChoreForm({ onAddChore, onCancel }: AddCustomChoreFormP
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4 pt-4">
-          <div>
-            <Label htmlFor="chore-name">Chore Name</Label>
-            <Input
-              id="chore-name"
-              value={choreName}
-              onChange={(e) => setChoreName(e.target.value)}
-              placeholder="Enter chore name"
-              className="border-purple-200"
-            />
-          </div>
+          <BasicFields
+            choreName={choreName}
+            choreDescription={choreDescription}
+            category={category}
+            onChoreNameChange={setChoreName}
+            onChoreDescriptionChange={setChoreDescription}
+            onCategoryChange={setCategory}
+          />
 
-          <div>
-            <Label htmlFor="chore-description">Description (optional)</Label>
-            <Textarea
-              id="chore-description"
-              value={choreDescription}
-              onChange={(e) => setChoreDescription(e.target.value)}
-              placeholder="Enter a description"
-              className="border-purple-200 resize-none"
-              rows={2}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="chore-category">Category (optional)</Label>
-            <Input
-              id="chore-category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g., Bedroom, Kitchen, etc."
-              className="border-purple-200"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="chore-frequency">Frequency</Label>
-            <Select
-              value={frequency}
-              onValueChange={(value) => setFrequency(value as ChoreFrequency)}
-            >
-              <SelectTrigger className="border-purple-200">
-                <SelectValue placeholder="Select frequency" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="custom">Custom</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FrequencyField
+            frequency={frequency}
+            onFrequencyChange={setFrequency}
+          />
 
           {frequency === "weekly" && (
-            <div className="space-y-2">
-              <Label>Days of Week</Label>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                {DAYS_OF_WEEK.map((day) => (
-                  <div
-                    key={day.value}
-                    className="flex items-center space-x-2 rounded-md border border-purple-100 p-2"
-                  >
-                    <Checkbox
-                      id={`day-${day.value}`}
-                      checked={selectedDays.includes(day.value)}
-                      onCheckedChange={() => handleDayToggle(day.value)}
-                      className="border-purple-300 text-purple-600 data-[state=checked]:bg-purple-600"
-                    />
-                    <Label
-                      htmlFor={`day-${day.value}`}
-                      className="cursor-pointer"
-                    >
-                      {day.label}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <DaySelector
+              selectedDays={selectedDays}
+              onDayToggle={handleDayToggle}
+            />
           )}
 
-          <div className="space-y-2">
-            <Label>Choose an Icon</Label>
-            <div className="grid grid-cols-5 gap-2 sm:grid-cols-7 md:grid-cols-10">
-              {COMMON_EMOJI_CHOICES.map((emojiChoice) => (
-                <button
-                  key={emojiChoice.emoji}
-                  type="button"
-                  className={`rounded-md p-3 text-2xl hover:bg-purple-100 ${
-                    selectedEmoji === emojiChoice.emoji
-                      ? "bg-purple-200"
-                      : "bg-white"
-                  }`}
-                  onClick={() => setSelectedEmoji(emojiChoice.emoji)}
-                  title={emojiChoice.name}
-                >
-                  {emojiChoice.emoji}
-                </button>
-              ))}
-            </div>
-          </div>
+          <EmojiSelector
+            selectedEmoji={selectedEmoji}
+            onEmojiSelect={setSelectedEmoji}
+          />
         </CardContent>
         <CardFooter className="flex justify-end gap-2 pt-2">
           <Button
@@ -229,4 +212,6 @@ export function AddCustomChoreForm({ onAddChore, onCancel }: AddCustomChoreFormP
       </form>
     </Card>
   );
-}
+});
+
+AddCustomChoreForm.displayName = 'AddCustomChoreForm';
