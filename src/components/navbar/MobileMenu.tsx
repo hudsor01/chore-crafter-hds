@@ -27,25 +27,15 @@ const MobileMenuButton = memo(({ isOpen, onToggle }: { isOpen: boolean; onToggle
 
 MobileMenuButton.displayName = 'MobileMenuButton';
 
-const MobileMenuContent = memo(({ user, signOut, onClose }: { user: any; signOut: () => void; onClose: () => void }) => (
-  <div className="md:hidden mt-4 pb-4 border-t border-slate-200 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg">
-    <MobileNavLinks user={user} onLinkClick={onClose} />
-    <MobileAuthSection user={user} signOut={signOut} onClose={onClose} />
-  </div>
-));
-
-MobileMenuContent.displayName = 'MobileMenuContent';
-
 const MobileMenu = memo(({ isOpen, onToggle, user, signOut }: MobileMenuProps) => {
   return (
     <>
       <MobileMenuButton isOpen={isOpen} onToggle={onToggle} />
       {isOpen && (
-        <MobileMenuContent 
-          user={user} 
-          signOut={signOut} 
-          onClose={() => onToggle()} 
-        />
+        <div className="md:hidden mt-4 pb-4 border-t border-slate-200 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg">
+          <MobileNavLinks user={user} onLinkClick={onToggle} />
+          <MobileAuthSection user={user} signOut={signOut} onClose={onToggle} />
+        </div>
       )}
     </>
   );

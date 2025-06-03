@@ -40,13 +40,6 @@ const Navbar = memo(() => {
             signOut={signOut}
           />
         </div>
-
-        {/* Mobile Menu Content */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-slate-200 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg">
-            {/* Content is handled by MobileMenu component */}
-          </div>
-        )}
       </div>
     </nav>
   );
