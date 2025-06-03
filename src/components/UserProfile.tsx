@@ -99,6 +99,34 @@ const UserProfile = memo(() => {
     }
   }, [profile, user, toast]);
 
+  const updatePreferences = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user?.id,
+          ...profile,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Preferences updated",
+        description: "Your preferences have been successfully updated.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [profile, user, toast]);
+
   const handleSignOut = useCallback(async () => {
     await signOut();
   }, [signOut]);
@@ -115,7 +143,7 @@ const UserProfile = memo(() => {
       <PreferencesCard
         preferences={profile}
         isLoading={isLoading}
-        onUpdate={updateProfile}
+        onUpdate={updatePreferences}
         onPreferenceChange={handlePreferenceChange}
       />
 
