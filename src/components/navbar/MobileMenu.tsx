@@ -2,7 +2,8 @@
 import React, { memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import { MobileNavLinks, MobileAuthSection } from './NavLinks';
+import { MobileNavLinks } from './NavLinks';
+import { MobileAuthSection } from './AuthSection';
 
 interface MobileMenuProps {
   isOpen: boolean;

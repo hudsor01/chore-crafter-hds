@@ -6,12 +6,14 @@ interface NavLinkProps {
   to: string;
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }
 
-const NavLink = memo(({ to, children, className = "" }: NavLinkProps) => (
+const NavLink = memo(({ to, children, className = "", onClick }: NavLinkProps) => (
   <Link 
     to={to}
     className={`text-slate-700 hover:text-indigo-600 transition-all duration-200 font-medium relative group ${className}`}
+    onClick={onClick}
   >
     {children}
     <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
