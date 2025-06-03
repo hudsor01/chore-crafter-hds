@@ -14,6 +14,8 @@ const Navbar = memo(() => {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
 
+  console.log('Navbar rendering - User:', user ? 'Logged in' : 'Not logged in');
+
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-6 py-4">
