@@ -1,10 +1,14 @@
-
+import { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 
-const Layout = () => {
+interface LayoutProps {
+  children?: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
@@ -70,7 +74,7 @@ const Layout = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <Outlet />
+        {children || <Outlet />}
       </main>
       <footer className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-12 text-white shadow-2xl">
         <div className="container mx-auto px-4">

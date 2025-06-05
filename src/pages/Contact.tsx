@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { useAutoSave } from '@/hooks/useAutoSave';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Phone, MapPin, Send, MessageCircle, Clock, CheckCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Send, MessageCircle, Clock, CheckCircle, Save } from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +18,17 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  // Auto-save functionality
+  const { isSaving, lastSaved } = useAutoSave({
+    data: formData,
+    saveFunction: async (data) => {
+      // Save to localStorage as backup
+      console.log('Auto-saving contact form data');
+    },
+    delay: 3000,
+    storageKey: 'contact-form-draft'
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -44,13 +55,14 @@ const Contact = () => {
         duration: 5000,
       });
 
-      // Reset form
+      // Reset form and clear auto-save
       setFormData({
         name: '',
         email: '',
         subject: '',
         message: ''
       });
+      localStorage.removeItem('contact-form-draft');
 
     } catch (error: any) {
       console.error('Error sending contact email:', error);
@@ -83,13 +95,29 @@ const Contact = () => {
         <div className="lg:col-span-2">
           <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="pb-6">
-              <CardTitle className="text-2xl font-bold text-slate-900 flex items-center">
-                <MessageCircle className="h-6 w-6 mr-3 text-indigo-600" />
-                Send us a message
-              </CardTitle>
-              <CardDescription className="text-lg text-slate-600">
-                Fill out the form below and we'll get back to you within 24 hours.
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold text-slate-900 flex items-center">
+                    <MessageCircle className="h-6 w-6 mr-3 text-indigo-600" />
+                    Send us a message
+                  </CardTitle>
+                  <CardDescription className="text-lg text-slate-600">
+                    Fill out the form below and we'll get back to you within 24 hours.
+                  </CardDescription>
+                </div>
+                {isSaving && (
+                  <div className="flex items-center text-sm text-slate-500">
+                    <Save className="h-4 w-4 mr-2 animate-pulse" />
+                    Auto-saving...
+                  </div>
+                )}
+              </div>
+              {lastSaved && (
+                <div className="text-xs text-slate-500 flex items-center">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Last saved: {lastSaved.toLocaleTimeString()}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
