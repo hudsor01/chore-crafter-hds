@@ -5,6 +5,7 @@ import { User } from '@supabase/supabase-js';
 
 interface NavLinksProps {
   user: User | null;
+  onLinkClick?: () => void;
 }
 
 export const DesktopNavLinks: React.FC<NavLinksProps> = ({ user }) => {
@@ -40,24 +41,27 @@ export const DesktopNavLinks: React.FC<NavLinksProps> = ({ user }) => {
   );
 };
 
-export const MobileNavLinks: React.FC<NavLinksProps> = ({ user }) => {
+export const MobileNavLinks: React.FC<NavLinksProps> = ({ user, onLinkClick }) => {
   return (
     <div className="flex flex-col space-y-4 pt-4 border-t border-slate-200">
       <Link 
         to="/templates" 
         className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200 py-2"
+        onClick={onLinkClick}
       >
         Templates
       </Link>
       <Link 
         to="/pricing" 
         className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200 py-2"
+        onClick={onLinkClick}
       >
         Pricing
       </Link>
       <Link 
         to="/contact" 
         className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200 py-2"
+        onClick={onLinkClick}
       >
         Contact
       </Link>
@@ -65,6 +69,7 @@ export const MobileNavLinks: React.FC<NavLinksProps> = ({ user }) => {
         <Link 
           to="/dashboard" 
           className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200 py-2"
+          onClick={onLinkClick}
         >
           Dashboard
         </Link>
