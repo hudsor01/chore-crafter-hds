@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Ocean Breeze + Modern Monochrome palette
+				cyan: {
+					50: '#ecfeff',
+					100: '#cffafe',
+					200: '#a5f3fc',
+					300: '#67e8f9',
+					400: '#22d3ee',
+					500: '#06b6d4',
+					600: '#0891b2',
+					700: '#0e7490',
+					800: '#155e75',
+					900: '#164e63',
 				}
 			},
 			borderRadius: {
