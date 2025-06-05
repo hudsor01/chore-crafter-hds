@@ -50,31 +50,31 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-sm font-medium mb-6">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
             <Star className="h-4 w-4 mr-2" />
             Transparent Pricing
           </div>
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-6 text-slate-900">
             Choose Your Plan
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
             Start free and unlock premium features as your family grows. 
             <br />
-            <span className="font-medium text-indigo-600">Always transparent, always fair.</span>
+            <span className="font-medium text-blue-600">Always transparent, always fair.</span>
           </p>
         </div>
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-20">
           {/* Free Plan */}
-          <Card className="border-2 border-green-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+          <Card className="border-2 border-green-200 relative bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="text-center pb-8">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
                   <Star className="h-8 w-8 text-green-600" />
                 </div>
               </div>
@@ -85,8 +85,8 @@ const Pricing = () => {
             <CardContent className="space-y-6">
               <ul className="space-y-4">
                 {freeFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center group">
-                    <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors duration-200">
+                  <li key={index} className="flex items-center">
+                    <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3">
                       <Check className="h-3 w-3 text-green-600" />
                     </div>
                     <span className="text-slate-700 text-sm">{feature}</span>
@@ -94,7 +94,7 @@ const Pricing = () => {
                 ))}
               </ul>
               <Button 
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
                 onClick={() => navigate('/auth')}
               >
                 Get Started Free
@@ -104,13 +104,13 @@ const Pricing = () => {
           </Card>
 
           {/* Pro Plan */}
-          <Card className="border-2 border-purple-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 scale-105">
-            <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 text-sm font-medium">
+          <Card className="border-2 border-purple-200 relative bg-white shadow-xl hover:shadow-2xl transition-all duration-300 scale-105">
+            <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-4 py-1 text-sm font-medium">
               Most Popular
             </Badge>
             <CardHeader className="text-center pb-8">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center">
                   <Crown className="h-8 w-8 text-purple-600" />
                 </div>
               </div>
@@ -124,8 +124,8 @@ const Pricing = () => {
             <CardContent className="space-y-6">
               <ul className="space-y-4">
                 {proFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center group">
-                    <div className="flex-shrink-0 w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-purple-200 transition-colors duration-200">
+                  <li key={index} className="flex items-center">
+                    <div className="flex-shrink-0 w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center mr-3">
                       <Check className="h-3 w-3 text-purple-600" />
                     </div>
                     <span className="text-slate-700 text-sm">{feature}</span>
@@ -133,7 +133,7 @@ const Pricing = () => {
                 ))}
               </ul>
               <Button 
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                 onClick={() => navigate('/auth')}
               >
                 <Zap className="mr-2 h-4 w-4" />
@@ -147,10 +147,10 @@ const Pricing = () => {
           </Card>
 
           {/* Enterprise Plan */}
-          <Card className="border-2 border-orange-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+          <Card className="border-2 border-orange-200 relative bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="text-center pb-8">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center">
                   <Building2 className="h-8 w-8 text-orange-600" />
                 </div>
               </div>
@@ -161,8 +161,8 @@ const Pricing = () => {
             <CardContent className="space-y-6">
               <ul className="space-y-4">
                 {enterpriseFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center group">
-                    <div className="flex-shrink-0 w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-orange-200 transition-colors duration-200">
+                  <li key={index} className="flex items-center">
+                    <div className="flex-shrink-0 w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center mr-3">
                       <Check className="h-3 w-3 text-orange-600" />
                     </div>
                     <span className="text-slate-700 text-sm">{feature}</span>
@@ -170,7 +170,7 @@ const Pricing = () => {
                 ))}
               </ul>
               <Button 
-                className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white"
                 onClick={() => navigate('/contact')}
               >
                 <Building2 className="mr-2 h-4 w-4" />
@@ -212,7 +212,7 @@ const Pricing = () => {
                 answer: "Yes, we offer a 30-day money-back guarantee on all Pro subscriptions. No questions asked."
               }
             ].map((faq, index) => (
-              <Card key={index} className="border-0 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <Card key={index} className="border-0 bg-white shadow-lg">
                 <CardContent className="p-6">
                   <h3 className="font-bold text-slate-900 mb-3 text-lg">{faq.question}</h3>
                   <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
