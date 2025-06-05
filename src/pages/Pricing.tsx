@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Zap, Crown, ArrowRight, Sparkles } from "lucide-react";
+import { Check, Star, Zap, Crown, ArrowRight, Sparkles, Building2 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const Pricing = () => {
@@ -31,35 +31,22 @@ const Pricing = () => {
     "Voice Commands Support",
     "Unlimited Charts & Children",
     "Advanced Analytics",
-    "Custom Branding",
     "Priority Support"
   ];
 
-  const featureCategories = [
-    {
-      title: "Core Features",
-      icon: Star,
-      color: "blue",
-      features: ["Drag & Drop Interface", "Role Management", "Leaderboards", "Data Export"]
-    },
-    {
-      title: "Financial Features", 
-      icon: Zap,
-      color: "green",
-      features: ["Banking Integration", "Allowance Tracking", "Reward Management", "Spending Analytics"]
-    },
-    {
-      title: "Smart Integration",
-      icon: Crown,
-      color: "purple", 
-      features: ["Google Calendar Sync", "IoT Device Control", "Voice Commands", "Smart Home Integration"]
-    },
-    {
-      title: "Social & Learning",
-      icon: Sparkles,
-      color: "orange",
-      features: ["Family Groups", "Educational Content", "Chat & Messaging", "Achievement Sharing"]
-    }
+  const enterpriseFeatures = [
+    "Everything in Pro",
+    "Custom Branding & White Label",
+    "Advanced User Management",
+    "API Access & Integrations",
+    "Dedicated Account Manager",
+    "Custom Training & Onboarding",
+    "SLA & 24/7 Priority Support",
+    "Advanced Security & Compliance",
+    "Custom Feature Development",
+    "Multi-Organization Management",
+    "Advanced Reporting & Analytics",
+    "Enterprise SSO Integration"
   ];
 
   return (
@@ -81,7 +68,7 @@ const Pricing = () => {
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-20">
         {/* Free Plan */}
         <Card className="border-2 border-green-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
           <CardHeader className="text-center pb-8">
@@ -101,7 +88,7 @@ const Pricing = () => {
                   <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors duration-200">
                     <Check className="h-3 w-3 text-green-600" />
                   </div>
-                  <span className="text-slate-700">{feature}</span>
+                  <span className="text-slate-700 text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -116,7 +103,7 @@ const Pricing = () => {
         </Card>
 
         {/* Pro Plan */}
-        <Card className="border-2 border-purple-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+        <Card className="border-2 border-purple-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 scale-105">
           <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 text-sm font-medium">
             Most Popular
           </Badge>
@@ -140,7 +127,7 @@ const Pricing = () => {
                   <div className="flex-shrink-0 w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-purple-200 transition-colors duration-200">
                     <Check className="h-3 w-3 text-purple-600" />
                   </div>
-                  <span className="text-slate-700">{feature}</span>
+                  <span className="text-slate-700 text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -157,6 +144,43 @@ const Pricing = () => {
             </p>
           </CardContent>
         </Card>
+
+        {/* Enterprise Plan */}
+        <Card className="border-2 border-orange-200 relative bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+          <CardHeader className="text-center pb-8">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl flex items-center justify-center">
+                <Building2 className="h-8 w-8 text-orange-600" />
+              </div>
+            </div>
+            <CardTitle className="text-3xl font-bold text-slate-900">Enterprise</CardTitle>
+            <div className="text-5xl font-bold text-orange-600 mt-4">Custom</div>
+            <p className="text-slate-600 mt-2 text-lg">For schools & organizations</p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <ul className="space-y-4">
+              {enterpriseFeatures.map((feature, index) => (
+                <li key={index} className="flex items-center group">
+                  <div className="flex-shrink-0 w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-orange-200 transition-colors duration-200">
+                    <Check className="h-3 w-3 text-orange-600" />
+                  </div>
+                  <span className="text-slate-700 text-sm">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <Button 
+              className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+              onClick={() => navigate('/contact')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Contact Sales
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <p className="text-xs text-slate-500 text-center">
+              Custom pricing based on needs
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Feature Breakdown */}
@@ -169,7 +193,32 @@ const Pricing = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featureCategories.map((category, index) => {
+          {[
+            {
+              title: "Core Features",
+              icon: Star,
+              color: "blue",
+              features: ["Drag & Drop Interface", "Role Management", "Leaderboards", "Data Export"]
+            },
+            {
+              title: "Financial Features", 
+              icon: Zap,
+              color: "green",
+              features: ["Banking Integration", "Allowance Tracking", "Reward Management", "Spending Analytics"]
+            },
+            {
+              title: "Smart Integration",
+              icon: Crown,
+              color: "purple", 
+              features: ["Google Calendar Sync", "IoT Device Control", "Voice Commands", "Smart Home Integration"]
+            },
+            {
+              title: "Enterprise Tools",
+              icon: Building2,
+              color: "orange",
+              features: ["Custom Branding", "API Access", "SSO Integration", "Advanced Analytics"]
+            }
+          ].map((category, index) => {
             const colorMap = {
               blue: { bg: "from-blue-100 to-indigo-100", text: "text-blue-600", border: "border-blue-200" },
               green: { bg: "from-green-100 to-emerald-100", text: "text-green-600", border: "border-green-200" },
@@ -226,6 +275,14 @@ const Pricing = () => {
             {
               question: "Do you offer refunds?",
               answer: "Yes, we offer a 30-day money-back guarantee on all Pro subscriptions. No questions asked."
+            },
+            {
+              question: "What's included in Enterprise support?",
+              answer: "Enterprise customers get 24/7 priority support, dedicated account management, and custom SLA agreements."
+            },
+            {
+              question: "Can I customize Enterprise features?",
+              answer: "Absolutely! Enterprise plans include custom feature development based on your organization's specific needs."
             }
           ].map((faq, index) => (
             <Card key={index} className="border-0 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
