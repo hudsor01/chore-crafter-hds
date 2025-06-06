@@ -6,10 +6,10 @@ import FeaturesSection from '@/components/home/FeaturesSection';
 import RecentChartsSection from '@/components/home/RecentChartsSection';
 
 const Index = () => {
-  console.log('Index page rendering - this should show in console');
+  console.log('Index page rendering with new color system');
   
   return (
-    <div className="min-h-screen space-y-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-ocean-50 to-slate-100 space-y-8">
       <HeroSection />
       <HowItWorksSection />
       <FeaturesSection />
