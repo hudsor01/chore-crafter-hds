@@ -1,5 +1,4 @@
 
-import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -29,6 +28,38 @@ const App = () => {
     if (!hasCompletedOnboarding) {
       setShowOnboarding(true);
     }
+
+    // Force remove any persistent toasts on app load
+    const removeToasts = () => {
+      const toastSelectors = [
+        '.Toaster',
+        '[data-sonner-toaster]',
+        '.sonner-toast',
+        '[data-toast-viewport]',
+        '[data-radix-toast-viewport]',
+        '.toast-viewport',
+        'div[data-state="open"][data-swipe-direction]',
+        'div[role="status"][aria-live="polite"]',
+        'div[role="region"][aria-label*="toast"]',
+        'div[role="region"][aria-label*="Notification"]'
+      ];
+      
+      toastSelectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          (el as HTMLElement).style.display = 'none';
+          (el as HTMLElement).style.visibility = 'hidden';
+          (el as HTMLElement).style.opacity = '0';
+          (el as HTMLElement).remove();
+        });
+      });
+    };
+
+    // Remove on load and set interval to catch any new ones
+    removeToasts();
+    const interval = setInterval(removeToasts, 100);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
