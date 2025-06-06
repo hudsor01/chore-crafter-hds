@@ -9,7 +9,7 @@ const Index = () => {
   console.log('Index page rendering - this should show in console');
   
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen space-y-12">
       <HeroSection />
       <HowItWorksSection />
       <FeaturesSection />
