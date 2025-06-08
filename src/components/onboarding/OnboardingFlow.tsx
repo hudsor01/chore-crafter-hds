@@ -26,25 +26,25 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isOpen, onClose }) => {
       id: 'welcome',
       title: 'Welcome to ChoreChart! 🎉',
       description: 'Create beautiful chore charts that make household management fun for the whole family.',
-      icon: <Sparkles className="h-8 w-8 text-blue-500" />
+      icon: <Sparkles className="h-8 w-8 text-primary" />
     },
     {
       id: 'templates',
       title: 'Choose Your Template',
       description: 'Start with our pre-designed templates for daily, weekly, or custom chore schedules.',
-      icon: <Target className="h-8 w-8 text-green-500" />
+      icon: <Target className="h-8 w-8 text-primary" />
     },
     {
       id: 'shortcuts',
       title: 'Power User Tips',
       description: 'Use keyboard shortcuts: Ctrl+N for new chart, Ctrl+S to save, and Ctrl+P to print.',
-      icon: <Zap className="h-8 w-8 text-yellow-500" />
+      icon: <Zap className="h-8 w-8 text-primary" />
     },
     {
       id: 'complete',
       title: 'You\'re All Set!',
       description: 'Ready to create your first chore chart? Let\'s make household management magical!',
-      icon: <CheckCircle className="h-8 w-8 text-purple-500" />
+      icon: <CheckCircle className="h-8 w-8 text-primary" />
     }
   ];
 
@@ -77,26 +77,26 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-      <Card className={`w-full max-w-md transform transition-all duration-300 ${isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+    <div className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <Card className={`w-full max-w-md transform transition-all duration-300 shadow-2xl border-border bg-card ${isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-6">
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-muted-foreground">
               Step {currentStep + 1} of {steps.length}
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-accent">
               <X className="h-4 w-4" />
             </Button>
           </div>
 
           <div className="text-center mb-6">
             <div className="mb-4 flex justify-center">
-              <div className="p-3 bg-slate-100 rounded-full">
+              <div className="p-3 bg-accent rounded-full">
                 {steps[currentStep].icon}
               </div>
             </div>
-            <h2 className="text-xl font-bold mb-2">{steps[currentStep].title}</h2>
-            <p className="text-slate-600">{steps[currentStep].description}</p>
+            <h2 className="text-xl font-bold mb-2 text-foreground">{steps[currentStep].title}</h2>
+            <p className="text-muted-foreground">{steps[currentStep].description}</p>
           </div>
 
           <div className="flex justify-center mb-6">
@@ -105,7 +105,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ isOpen, onClose }) => {
                 <div
                   key={index}
                   className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-                    index === currentStep ? 'bg-blue-500' : 'bg-slate-300'
+                    index === currentStep ? 'bg-primary' : 'bg-muted'
                   }`}
                 />
               ))}
