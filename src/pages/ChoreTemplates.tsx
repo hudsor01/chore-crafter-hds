@@ -4,9 +4,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useChores } from "@/contexts/ChoreContext";
 import { Link } from "react-router-dom";
 import { Calendar, ArrowRight, ListCheck, SquareDashed, Star, Users, Clock, Eye, Waves } from "lucide-react";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const ChoreTemplates = () => {
   const { templates } = useChores();
+  const [previewTemplate, setPreviewTemplate] = useState<any>(null);
 
   const getTemplateIcon = (type: string) => {
     switch (type) {
@@ -84,7 +87,7 @@ const ChoreTemplates = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-gradient-to-r from-cyan-50 to-slate-50 p-6 rounded-xl border border-cyan-200 hover:shadow-lg transition-all duration-300">
             <div className="flex items-center">
-              <Star className="h-10 w-10 text-yellow-500 mr-4" />
+              <Star className="h-10 w-10 text-cyan-600 mr-4" />
               <div>
                 <p className="text-sm text-slate-600 mb-1">Most Popular</p>
                 <p className="font-semibold text-slate-800 text-lg">Daily Chores</p>
@@ -168,13 +171,17 @@ const ChoreTemplates = () => {
                 </div>
               </CardContent>
               
-              <CardFooter className="bg-gradient-to-r from-white to-slate-50 border-t border-slate-100 p-4 space-y-2 mt-auto">
+              <CardFooter className="bg-gradient-to-r from-white to-slate-50 border-t border-slate-100 p-4 space-y-3 mt-auto">
                 <Button asChild className="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600 text-white font-medium shadow-lg">
                   <Link to={`/customize/${template.id}`}>
                     Choose Template <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button variant="outline" className="w-full text-slate-600 hover:text-cyan-600 border-slate-300 hover:border-cyan-300 hover:bg-cyan-50">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-slate-600 hover:text-cyan-600 border-slate-300 hover:border-cyan-300 hover:bg-cyan-50"
+                  onClick={() => setPreviewTemplate(template)}
+                >
                   <Eye className="mr-2 h-4 w-4" />
                   Preview Template
                 </Button>
@@ -205,6 +212,69 @@ const ChoreTemplates = () => {
           </div>
         </div>
       </div>
+
+      {/* Preview Template Dialog */}
+      <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
+        <DialogContent className="max-w-2xl bg-gradient-to-br from-white to-cyan-50 border-cyan-200">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-slate-800 flex items-center">
+              {previewTemplate && getTemplateIcon(previewTemplate.type)}
+              <span className="ml-3">{previewTemplate?.name}</span>
+            </DialogTitle>
+            <DialogDescription className="text-slate-600 text-lg">
+              {previewTemplate?.description}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {previewTemplate && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="text-center">
+                  <p className="text-sm text-slate-500 mb-1">Recommended Age</p>
+                  <p className="font-semibold text-slate-700">{getRecommendedAge(previewTemplate.type)}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-slate-500 mb-1">Time Commitment</p>
+                  <p className="font-semibold text-slate-700">{getEstimatedTime(previewTemplate.type)}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800 mb-3">Included Chores ({previewTemplate.chores.length})</h4>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {previewTemplate.chores.length > 0 ? (
+                    previewTemplate.chores.map((chore: any, index: number) => (
+                      <div key={index} className="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-cyan-300 transition-colors">
+                        <span className="text-2xl mr-3">{chore.icon}</span>
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-800">{chore.name}</p>
+                          <p className="text-sm text-slate-600">{chore.description}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-slate-500">
+                      <p className="text-lg">Start with a blank canvas</p>
+                      <p className="text-sm">Add your own custom chores to get started</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <Button asChild className="flex-1 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600">
+                  <Link to={`/customize/${previewTemplate.id}`}>
+                    Choose This Template <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" onClick={() => setPreviewTemplate(null)} className="px-6">
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
