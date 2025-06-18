@@ -509,7 +509,7 @@ const CustomizeChart = () => {
                   <Button
                     variant="outline"
                     onClick={() => setCurrentStep(currentStep - 1)}
-                    className="w-full justify-start text-slate-600 hover:text-slate-800 border-slate-300"
+                    className="w-full justify-start text-slate-700 hover:text-slate-900 border-slate-300 hover:border-indigo-300"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Previous Step
@@ -547,45 +547,45 @@ const CustomizeChart = () => {
             </Card>
 
             {/* Tips */}
-            <Card className="bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-200">
+            <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-teal-800 flex items-center">
-                  <Sparkles className="mr-2 h-5 w-5 text-teal-600" />
+                <CardTitle className="text-lg text-indigo-800 flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-indigo-600" />
                   Pro Tips
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <div className="flex items-start gap-3">
-                  <Heart className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <Heart className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-teal-800 mb-1">
+                    <p className="font-medium text-indigo-800 mb-1">
                       Start Simple
                     </p>
-                    <p className="text-teal-700">
+                    <p className="text-indigo-700">
                       Begin with 2-3 age-appropriate chores and build up
                       gradually.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Target className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <Target className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-teal-800 mb-1">
+                    <p className="font-medium text-indigo-800 mb-1">
                       Be Specific
                     </p>
-                    <p className="text-teal-700">
+                    <p className="text-indigo-700">
                       Clear instructions help children succeed and feel
                       confident.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Wand2 className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <Wand2 className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-teal-800 mb-1">
+                    <p className="font-medium text-indigo-800 mb-1">
                       Celebrate Success
                     </p>
-                    <p className="text-teal-700">
+                    <p className="text-indigo-700">
                       Positive reinforcement builds lasting habits and
                       motivation.
                     </p>
