@@ -12,13 +12,13 @@ export const DesktopNavLinks: React.FC<NavLinksProps> = ({ user }) => {
     <div className="hidden md:flex items-center space-x-8">
       <Link
         to="/templates"
-        className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+        className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 hover:underline underline-offset-4"
       >
         Templates
       </Link>
       <Link
         to="/pricing"
-        className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+        className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 hover:underline underline-offset-4"
       >
         Pricing
       </Link>
