@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,7 +92,14 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background: linear-gradient(135deg, hsl(248 250 252) 0%, hsl(241 245 249) 50%, hsl(248 250 252) 100%) !important;
+    background: linear-gradient(
+      135deg,
+      hsl(236 253 255) 0%,
+      hsl(240 249 255) 25%,
+      hsl(224 242 254) 50%,
+      hsl(241 245 249) 75%,
+      hsl(248 250 252) 100%
+    ) !important;
     min-height: 100vh;
     transform: translateZ(0);
   }
@@ -128,9 +134,76 @@ div[class*="bg-green"],
   display: none !important;
 }
 
-/* Ocean Breeze + Modern Monochrome Gradients */
+/* Prevent any yellowish/brown colors from appearing */
+svg[stroke*="193, 150, 108"],
+svg[style*="rgb(193, 150, 108)"],
+*[style*="color: rgb(193, 150, 108)"],
+*[color="rgb(193, 150, 108)"] {
+  stroke: hsl(215 25% 44%) !important;
+  color: hsl(215 25% 44%) !important;
+}
+
+/* Targeted override for specific problematic colors */
+*[style*="background-color: rgb(255, 255, 0)"] {
+  background-color: hsl(188 85% 47%) !important;
+  color: white !important;
+}
+
+*[style*="backgroundColor: rgb(255, 255, 0)"] {
+  background-color: hsl(188 85% 47%) !important;
+  color: white !important;
+}
+
+*[style*="background: rgb(255, 255, 0)"] {
+  background: hsl(188 85% 47%) !important;
+  color: white !important;
+}
+
+*[style*="color: rgb(193, 150, 108)"] {
+  color: hsl(215 25% 44%) !important;
+}
+
+/* Specific targeting for yellow button backgrounds */
+button[style*="rgb(255, 255, 0)"] {
+  background-color: hsl(188 85% 47%) !important;
+  color: white !important;
+}
+
+/* Ensure all SVG icons inherit proper text colors */
+svg {
+  color: inherit !important;
+  stroke: currentColor !important;
+}
+
+/* Enhanced responsive card layouts */
+.responsive-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .responsive-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* Ocean Breeze + Perfect Harmony Gradients */
 .ocean-gradient {
-  background: linear-gradient(135deg, #06b6d4 0%, #1e293b 100%) !important;
+  background: linear-gradient(
+    135deg,
+    #06b6d4 0%,
+    #0e7490 50%,
+    #1e293b 100%
+  ) !important;
 }
 
 .slate-gradient {
@@ -138,26 +211,53 @@ div[class*="bg-green"],
 }
 
 .ocean-light-gradient {
-  background: linear-gradient(135deg, #f1f5f9 0%, #ecfeff 100%) !important;
+  background: linear-gradient(
+    135deg,
+    #f1f5f9 0%,
+    #ecfeff 50%,
+    #cffafe 100%
+  ) !important;
+}
+
+.ocean-harmony-gradient {
+  background: linear-gradient(
+    135deg,
+    #22d3ee 0%,
+    #06b6d4 25%,
+    #0891b2 50%,
+    #0e7490 75%,
+    #164e63 100%
+  ) !important;
+}
+
+.perfect-harmony-bg {
+  background: linear-gradient(
+    135deg,
+    #ecfeff 0%,
+    #f0f9ff 25%,
+    #e0f2fe 50%,
+    #f1f5f9 75%,
+    #f8fafc 100%
+  ) !important;
 }
 
 @media print {
   body {
     @apply print:m-0 print:p-0 print:bg-white;
   }
-  
+
   .print\:hidden {
     display: none !important;
   }
-  
+
   .print\:block {
     display: block !important;
   }
-  
+
   table {
     page-break-inside: avoid;
   }
-  
+
   a {
     text-decoration: none !important;
   }
