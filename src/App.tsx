@@ -13,7 +13,7 @@ import CustomizeChart from "./pages/CustomizeChart";
 import ViewChart from "./pages/ViewChart";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
-import ColorTestPage from "./pages/ColorTestPage";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -71,7 +71,7 @@ const App = () => {
                   <Route path="/chart/:chartId" element={<ViewChart />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/color-test" element={<ColorTestPage />} />
+
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
