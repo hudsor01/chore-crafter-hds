@@ -241,9 +241,9 @@ const CustomizeChart = () => {
   const nextAction = getNextAction();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-cyan-50 to-teal-50">
+    <div className="min-h-screen bg-white">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-slate-900 to-gray-900 text-white py-12">
+      <div className="bg-black text-white py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex-1">
@@ -251,17 +251,17 @@ const CustomizeChart = () => {
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/templates")}
-                  className="text-gray-300 hover:text-blue-400 hover:bg-gray-800/50 p-2"
+                  className="text-white hover:text-gray-300 hover:bg-gray-800 p-2"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
-                <Badge className="bg-gray-800/50 text-blue-400 border-gray-700">
+                <Badge className="bg-gray-800 text-white border-gray-600">
                   {template.type.charAt(0).toUpperCase() +
                     template.type.slice(1)}{" "}
                   Template
                 </Badge>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-blue-400">
+              <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-white">
                 Customize Your {template.name}
               </h1>
               <p className="text-gray-300 text-lg max-w-2xl">
@@ -271,21 +271,21 @@ const CustomizeChart = () => {
             </div>
 
             {/* Progress Summary */}
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 min-w-[280px] border border-gray-700/40">
+            <div className="bg-gray-800 rounded-xl p-6 min-w-[280px] border border-gray-600">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-gray-300 font-medium">
                   Setup Progress
                 </span>
-                <span className="text-blue-400 font-bold text-lg">
+                <span className="text-white font-bold text-lg">
                   {calculateProgress()}%
                 </span>
               </div>
               <Progress
                 value={calculateProgress()}
-                className="mb-3 bg-gray-800/60"
+                className="mb-3 bg-gray-700"
               />
               <div className="flex items-center text-gray-300 text-sm">
-                <Target className="h-4 w-4 mr-2 text-blue-400" />
+                <Target className="h-4 w-4 mr-2 text-white" />
                 {nextAction.text}
               </div>
             </div>
@@ -313,10 +313,10 @@ const CustomizeChart = () => {
                   <Card
                     className={`h-full border-2 transition-all duration-300 ${
                       isCompleted
-                        ? "border-emerald-600 bg-gradient-to-br from-emerald-900/20 to-green-900/20 shadow-lg"
+                        ? "border-black bg-gray-50 shadow-lg"
                         : isActive
-                          ? "border-blue-500 bg-gradient-to-br from-blue-900/20 to-gray-900/20 shadow-md"
-                          : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:shadow-sm"
+                          ? "border-gray-400 bg-white shadow-md"
+                          : "border-gray-200 bg-white hover:border-gray-400 hover:shadow-sm"
                     }`}
                   >
                     <CardHeader className="pb-3">
@@ -324,10 +324,10 @@ const CustomizeChart = () => {
                         <div
                           className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
                             isCompleted
-                              ? "bg-gradient-to-r from-emerald-700 to-green-700 text-white shadow-lg"
+                              ? "bg-black text-white shadow-lg"
                               : isActive
-                                ? "bg-gradient-to-r from-blue-600 to-gray-700 text-white shadow-md"
-                                : "bg-gray-200 text-gray-700"
+                                ? "bg-gray-600 text-white shadow-md"
+                                : "bg-gray-200 text-gray-600"
                           }`}
                         >
                           {isCompleted ? (
@@ -340,9 +340,9 @@ const CustomizeChart = () => {
                           <h3
                             className={`font-semibold text-sm lg:text-base transition-colors ${
                               isCompleted
-                                ? "text-emerald-800"
+                                ? "text-black"
                                 : isActive
-                                  ? "text-blue-800"
+                                  ? "text-gray-800"
                                   : "text-gray-700"
                             }`}
                           >
