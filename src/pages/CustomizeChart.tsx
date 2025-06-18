@@ -8,20 +8,26 @@ import {
   Chore,
 } from "@/contexts/types/choreTypes";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Check,
   Save,
   Share2,
-  Download,
-  HelpCircle,
-  Lightbulb,
+  ArrowLeft,
+  Sparkles,
+  Users,
+  ClipboardList,
+  UserCheck,
+  Eye,
+  Wand2,
+  Heart,
+  Target,
+  BookOpen,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ChartDetails } from "@/components/chart-customizer/ChartDetails";
 import { ChildrenManager } from "@/components/chart-customizer/ChildrenManager";
 import { CustomChoresManager } from "@/components/chart-customizer/CustomChoresManager";
-import { ChoreAssignmentManager } from "@/components/chart-customizer/ChoreAssignmentManager";
+import { DragDropChoreAssignment } from "@/components/chart-customizer/DragDropChoreAssignment";
 import {
   Card,
   CardContent,
@@ -30,7 +36,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { DragDropChoreAssignment } from "@/components/chart-customizer/DragDropChoreAssignment";
+import { Badge } from "@/components/ui/badge";
 
 const CustomizeChart = () => {
   const { templateId } = useParams<{ templateId: string }>();
@@ -43,7 +49,7 @@ const CustomizeChart = () => {
   const [template, setTemplate] = useState<ChoreTemplate | null>(null);
   const [children, setChildren] = useState<Child[]>([]);
   const [assignments, setAssignments] = useState<ChoreAssignment[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("details");
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [customChores, setCustomChores] = useState<Chore[]>([]);
   const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
 
@@ -108,11 +114,11 @@ const CustomizeChart = () => {
       });
 
       toast({
-        title: "Chart Created!",
-        description: `"${chartName}" has been created successfully.`,
+        title: "Chart Created Successfully! 🎉",
+        description: `"${chartName}" is ready to use!`,
       });
 
-      navigate(`/view/${newChart.id}`);
+      navigate(`/chart/${newChart.id}`);
     } catch (error) {
       console.error("Error creating chart:", error);
       toast({
@@ -125,7 +131,6 @@ const CustomizeChart = () => {
   };
 
   const handleSaveDraft = () => {
-    // Save current progress to localStorage
     const draftData = {
       templateId,
       chartName,
@@ -150,261 +155,477 @@ const CustomizeChart = () => {
     return progress;
   };
 
-  const getNextStepSuggestion = () => {
-    if (!chartName.trim()) return "Start by giving your chart a name";
-    if (children.length === 0) return "Add children to your chart";
-    if (customChores.length === 0 && template?.chores.length === 0)
-      return "Add some chores";
-    if (assignments.length === 0) return "Assign chores to children";
-    return "Ready to create your chart!";
+  const getStepStatus = (step: number) => {
+    switch (step) {
+      case 1:
+        return chartName.trim()
+          ? "completed"
+          : currentStep === 1
+            ? "active"
+            : "pending";
+      case 2:
+        return children.length > 0
+          ? "completed"
+          : currentStep === 2
+            ? "active"
+            : "pending";
+      case 3:
+        return customChores.length > 0 || template?.chores.length > 0
+          ? "completed"
+          : currentStep === 3
+            ? "active"
+            : "pending";
+      case 4:
+        return assignments.length > 0
+          ? "completed"
+          : currentStep === 4
+            ? "active"
+            : "pending";
+      default:
+        return "pending";
+    }
   };
+
+  const getNextAction = () => {
+    if (!chartName.trim()) return { text: "Name your chart", step: 1 };
+    if (children.length === 0) return { text: "Add your children", step: 2 };
+    if (customChores.length === 0 && template?.chores.length === 0)
+      return { text: "Add chores", step: 3 };
+    if (assignments.length === 0) return { text: "Assign chores", step: 4 };
+    return { text: "Ready to create!", step: 5 };
+  };
+
+  const steps = [
+    {
+      number: 1,
+      title: "Chart Details",
+      description: "Name and customize your chart",
+      icon: <BookOpen className="h-5 w-5" />,
+      content: "details",
+    },
+    {
+      number: 2,
+      title: "Add Children",
+      description: "Who will be using this chart?",
+      icon: <Users className="h-5 w-5" />,
+      content: "children",
+    },
+    {
+      number: 3,
+      title: "Manage Chores",
+      description: "Add custom chores or use template chores",
+      icon: <ClipboardList className="h-5 w-5" />,
+      content: "chores",
+    },
+    {
+      number: 4,
+      title: "Assign & Create",
+      description: "Assign chores to children",
+      icon: <UserCheck className="h-5 w-5" />,
+      content: "assign",
+    },
+  ];
 
   if (!template) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-cyan-50 to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-200 border-t-cyan-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading your template...</p>
+        </div>
       </div>
     );
   }
 
-  // Combine template chores with custom chores
   const allChores = [...template.chores, ...customChores];
+  const nextAction = getNextAction();
 
   return (
-    <div className="space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-purple-800 mb-2">
-            Customize Your Chore Chart
-          </h1>
-          <p className="text-gray-600">
-            Add children, assign chores, and customize your {template.name}{" "}
-            chart.
-          </p>
-        </div>
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            onClick={handleSaveDraft}
-            className="text-purple-700 border-purple-300"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            Save Draft
-          </Button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-cyan-50 to-teal-50">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-slate-800 via-cyan-900 to-slate-900 text-white py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/templates")}
+                  className="text-cyan-300 hover:text-white hover:bg-cyan-800/50 p-2"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-400">
+                  {template.type.charAt(0).toUpperCase() +
+                    template.type.slice(1)}{" "}
+                  Template
+                </Badge>
+              </div>
+              <h1 className="text-3xl lg:text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-300 via-white to-cyan-300 bg-clip-text text-transparent">
+                Customize Your {template.name}
+              </h1>
+              <p className="text-cyan-100 text-lg max-w-2xl">
+                Let's create a personalized chore chart that works perfectly for
+                your family.
+              </p>
+            </div>
 
-      {/* Progress Indicator */}
-      <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg text-purple-800">
-              Setup Progress
-            </CardTitle>
-            <span className="text-sm font-medium text-purple-600">
-              {calculateProgress()}% Complete
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Progress value={calculateProgress()} className="mb-2" />
-          <div className="flex items-center text-sm text-gray-600">
-            <Lightbulb className="h-4 w-4 mr-2 text-teal-500" />
-            {getNextStepSuggestion()}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">
-              {children.length}
+            {/* Progress Summary */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 min-w-[280px]">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-cyan-200 font-medium">
+                  Setup Progress
+                </span>
+                <span className="text-white font-bold text-lg">
+                  {calculateProgress()}%
+                </span>
+              </div>
+              <Progress
+                value={calculateProgress()}
+                className="mb-3 bg-white/20"
+              />
+              <div className="flex items-center text-cyan-200 text-sm">
+                <Target className="h-4 w-4 mr-2 text-cyan-300" />
+                {nextAction.text}
+              </div>
             </div>
-            <div className="text-sm text-gray-600">Children</div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-indigo-600">
-              {allChores.length}
-            </div>
-            <div className="text-sm text-gray-600">Total Chores</div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-emerald-600">
-              {assignments.length}
-            </div>
-            <div className="text-sm text-gray-600">Assignments</div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-cyan-600">
-              {template.type}
-            </div>
-            <div className="text-sm text-gray-600">Template Type</div>
           </div>
         </div>
       </div>
 
-      <Tabs
-        defaultValue="details"
-        className="space-y-6"
-        value={activeTab}
-        onValueChange={setActiveTab}
-      >
-        <TabsList className="bg-purple-100 border border-purple-200 w-full">
-          <TabsTrigger
-            value="details"
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white flex-1"
-          >
-            Chart Details
-          </TabsTrigger>
-          <TabsTrigger
-            value="children"
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white flex-1"
-          >
-            Children ({children.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="chores"
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white flex-1"
-          >
-            Manage Chores ({allChores.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="assign"
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white flex-1"
-          >
-            Assignments ({assignments.length})
-          </TabsTrigger>
-        </TabsList>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Step Navigation */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {steps.map((step, index) => {
+              const status = getStepStatus(step.number);
+              const isActive = currentStep === step.number;
+              const isCompleted = status === "completed";
 
-        <TabsContent value="details" className="space-y-4">
-          <ChartDetails
-            template={template}
-            chartName={chartName}
-            setChartName={setChartName}
-          />
-        </TabsContent>
-
-        <TabsContent value="children" className="space-y-4">
-          <ChildrenManager children={children} setChildren={setChildren} />
-        </TabsContent>
-
-        <TabsContent value="chores" className="space-y-4">
-          <CustomChoresManager
-            customChores={customChores}
-            setCustomChores={setCustomChores}
-          />
-        </TabsContent>
-
-        <TabsContent value="assign" className="space-y-4">
-          <div className="space-y-4">
-            <div className="text-center">
-              <h2 className="text-xl font-bold mb-2">Assign Chores</h2>
-              <p className="text-gray-600 mb-4">
-                Drag chores from the available list to assign them to children
-              </p>
-            </div>
-
-            <DragDropChoreAssignment
-              children={children}
-              allChores={allChores}
-              assignments={assignments}
-              setAssignments={setAssignments}
-            />
+              return (
+                <div
+                  key={step.number}
+                  className={`flex-1 cursor-pointer transition-all duration-300 ${
+                    isActive ? "transform scale-105" : ""
+                  }`}
+                  onClick={() => setCurrentStep(step.number)}
+                >
+                  <Card
+                    className={`h-full border-2 transition-all duration-300 ${
+                      isCompleted
+                        ? "border-cyan-500 bg-gradient-to-br from-cyan-50 to-cyan-100 shadow-lg"
+                        : isActive
+                          ? "border-teal-400 bg-gradient-to-br from-teal-50 to-cyan-50 shadow-md"
+                          : "border-slate-200 bg-white hover:border-cyan-300 hover:shadow-sm"
+                    }`}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
+                            isCompleted
+                              ? "bg-cyan-500 text-white shadow-lg"
+                              : isActive
+                                ? "bg-teal-500 text-white shadow-md"
+                                : "bg-slate-100 text-slate-600"
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <Check className="h-5 w-5" />
+                          ) : (
+                            step.icon
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3
+                            className={`font-semibold text-sm lg:text-base transition-colors ${
+                              isCompleted
+                                ? "text-cyan-700"
+                                : isActive
+                                  ? "text-teal-700"
+                                  : "text-slate-700"
+                            }`}
+                          >
+                            {step.title}
+                          </h3>
+                          <p className="text-xs lg:text-sm text-slate-600 leading-tight">
+                            {step.description}
+                          </p>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </div>
+              );
+            })}
           </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/templates")}
-            className="border-purple-300 text-purple-700 hover:bg-purple-50"
-          >
-            Back to Templates
-          </Button>
-          <Button
-            variant="outline"
-            className="border-gray-300 text-gray-700 hover:bg-gray-50"
-          >
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Help
-          </Button>
         </div>
 
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
-          >
-            <Share2 className="mr-2 h-4 w-4" />
-            {isPreviewMode ? "Edit Mode" : "Preview"}
-          </Button>
-          <Button
-            onClick={handleSaveChart}
-            className="bg-purple-600 hover:bg-purple-700"
-            disabled={calculateProgress() < 100}
-          >
-            <Check className="mr-2 h-4 w-4" />
-            Create Chart
-          </Button>
+        {/* Current Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-gradient-to-br from-white to-cyan-50 border-cyan-200">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-cyan-600 mb-1">
+                {children.length}
+              </div>
+              <div className="text-sm text-slate-600">Children</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-teal-50 border-teal-200">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-teal-600 mb-1">
+                {allChores.length}
+              </div>
+              <div className="text-sm text-slate-600">Available Chores</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-slate-600 mb-1">
+                {assignments.length}
+              </div>
+              <div className="text-sm text-slate-600">Assignments</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-cyan-50 border-cyan-200">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-cyan-600 mb-1 capitalize">
+                {template.type}
+              </div>
+              <div className="text-sm text-slate-600">Template</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Step Content */}
+          <div className="xl:col-span-2">
+            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-cyan-50 to-teal-50 border-b border-cyan-200">
+                <CardTitle className="flex items-center gap-3 text-slate-800">
+                  {steps[currentStep - 1]?.icon}
+                  {steps[currentStep - 1]?.title}
+                </CardTitle>
+                <CardDescription className="text-slate-600">
+                  {steps[currentStep - 1]?.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                {currentStep === 1 && (
+                  <ChartDetails
+                    template={template}
+                    chartName={chartName}
+                    setChartName={setChartName}
+                  />
+                )}
+
+                {currentStep === 2 && (
+                  <ChildrenManager
+                    children={children}
+                    setChildren={setChildren}
+                  />
+                )}
+
+                {currentStep === 3 && (
+                  <CustomChoresManager
+                    customChores={customChores}
+                    setCustomChores={setCustomChores}
+                  />
+                )}
+
+                {currentStep === 4 && (
+                  <div className="space-y-6">
+                    {children.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Users className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-slate-600 mb-2">
+                          No Children Added Yet
+                        </h3>
+                        <p className="text-slate-500 mb-4">
+                          Add children first before assigning chores.
+                        </p>
+                        <Button
+                          onClick={() => setCurrentStep(2)}
+                          className="bg-cyan-600 hover:bg-cyan-700"
+                        >
+                          <Users className="mr-2 h-4 w-4" />
+                          Add Children
+                        </Button>
+                      </div>
+                    ) : allChores.length === 0 ? (
+                      <div className="text-center py-12">
+                        <ClipboardList className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-slate-600 mb-2">
+                          No Chores Available
+                        </h3>
+                        <p className="text-slate-500 mb-4">
+                          Add some chores before making assignments.
+                        </p>
+                        <Button
+                          onClick={() => setCurrentStep(3)}
+                          className="bg-teal-600 hover:bg-teal-700"
+                        >
+                          <ClipboardList className="mr-2 h-4 w-4" />
+                          Add Chores
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-bold text-slate-800 mb-2">
+                            Assign Chores to Children
+                          </h3>
+                          <p className="text-slate-600">
+                            Drag chores from the list to assign them to
+                            children, or use the assign buttons.
+                          </p>
+                        </div>
+                        <DragDropChoreAssignment
+                          children={children}
+                          allChores={allChores}
+                          assignments={assignments}
+                          setAssignments={setAssignments}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Navigation Actions */}
+            <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg text-slate-800">
+                  Quick Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {currentStep > 1 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentStep(currentStep - 1)}
+                    className="w-full justify-start text-slate-600 hover:text-slate-800 border-slate-300"
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Previous Step
+                  </Button>
+                )}
+
+                {currentStep < 4 && (
+                  <Button
+                    onClick={() => setCurrentStep(currentStep + 1)}
+                    className="w-full justify-start bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700"
+                  >
+                    Next Step
+                    <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
+                  </Button>
+                )}
+
+                <Button
+                  variant="outline"
+                  onClick={handleSaveDraft}
+                  className="w-full justify-start text-slate-600 hover:text-slate-800 border-slate-300"
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Draft
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setIsPreviewMode(!isPreviewMode)}
+                  className="w-full justify-start text-slate-600 hover:text-slate-800 border-slate-300"
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  {isPreviewMode ? "Edit Mode" : "Preview Chart"}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Tips */}
+            <Card className="bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-200">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg text-teal-800 flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-teal-600" />
+                  Pro Tips
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm">
+                <div className="flex items-start gap-3">
+                  <Heart className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-teal-800 mb-1">
+                      Start Simple
+                    </p>
+                    <p className="text-teal-700">
+                      Begin with 2-3 age-appropriate chores and build up
+                      gradually.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Target className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-teal-800 mb-1">
+                      Be Specific
+                    </p>
+                    <p className="text-teal-700">
+                      Clear instructions help children succeed and feel
+                      confident.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Wand2 className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-teal-800 mb-1">
+                      Celebrate Success
+                    </p>
+                    <p className="text-teal-700">
+                      Positive reinforcement builds lasting habits and
+                      motivation.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Bottom Actions */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 p-6 bg-white rounded-xl shadow-lg border border-slate-200">
+          <div className="text-center sm:text-left">
+            <p className="text-slate-600 text-sm">
+              Ready to create your chart? Make sure all steps are complete.
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Progress: {calculateProgress()}% complete
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/templates")}
+              className="border-slate-300 text-slate-600 hover:text-slate-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveChart}
+              disabled={calculateProgress() < 100}
+              className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-8 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Check className="mr-2 h-4 w-4" />
+              Create Chart
+            </Button>
+          </div>
         </div>
       </div>
-
-      {/* Tips Section */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="text-lg text-blue-800 flex items-center">
-            <Lightbulb className="mr-2 h-5 w-5 text-teal-500" />
-            Tips for Success
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <h4 className="font-medium text-blue-700 mb-1">
-                Age-Appropriate Chores
-              </h4>
-              <p className="text-gray-600">
-                Match chores to your child's age and abilities for better
-                success
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-blue-700 mb-1">Start Small</h4>
-              <p className="text-gray-600">
-                Begin with 2-3 chores and gradually add more as habits form
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-blue-700 mb-1">
-                Clear Instructions
-              </h4>
-              <p className="text-gray-600">
-                Make sure children understand exactly what each chore involves
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-blue-700 mb-1">
-                Celebrate Success
-              </h4>
-              <p className="text-gray-600">
-                Acknowledge completed chores to build positive habits
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
