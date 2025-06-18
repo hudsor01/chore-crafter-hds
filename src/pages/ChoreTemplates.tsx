@@ -150,14 +150,14 @@ const ChoreTemplates = () => {
               key={template.id}
               className="hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border-2 border-cyan-200 bg-white/80 backdrop-blur-sm group h-full flex flex-col min-h-[500px] w-full max-w-none"
             >
-              <CardHeader className="bg-gradient-to-r from-cyan-50 to-slate-50 pb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <CardTitle className="text-xl font-semibold text-slate-800">
+              <CardHeader className="bg-gradient-to-r from-cyan-50 to-slate-50 pb-4 p-4 lg:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
+                  <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 leading-tight">
                     {template.name}
                   </CardTitle>
                   <Badge type={template.type} />
                 </div>
-                <CardDescription className="text-slate-600 text-sm">
+                <CardDescription className="text-slate-600 text-sm leading-relaxed">
                   {template.description}
                 </CardDescription>
               </CardHeader>
@@ -175,17 +175,17 @@ const ChoreTemplates = () => {
                   </div>
                 </div>
 
-                <div className="p-4 space-y-4">
+                <div className="p-4 lg:p-5 space-y-4">
                   <div className="grid grid-cols-1 gap-3">
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
                       <div className="flex items-center">
-                        <Users className="h-4 w-4 text-slate-500 mr-2" />
+                        <Users className="h-4 w-4 text-slate-500 mr-2 flex-shrink-0" />
                         <span className="text-slate-600">
                           {getRecommendedAge(template.type)}
                         </span>
                       </div>
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 text-slate-500 mr-2" />
+                        <Clock className="h-4 w-4 text-slate-500 mr-2 flex-shrink-0" />
                         <span className="text-slate-600">
                           {getEstimatedTime(template.type)}
                         </span>
@@ -214,7 +214,7 @@ const ChoreTemplates = () => {
                 </div>
               </CardContent>
 
-              <CardFooter className="bg-gradient-to-r from-white to-slate-50 border-t border-slate-100 p-4 space-y-3 mt-auto">
+              <CardFooter className="bg-gradient-to-r from-white to-slate-50 border-t border-slate-100 p-4 lg:p-5 space-y-3 mt-auto">
                 <Button
                   asChild
                   className="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600 text-white font-medium shadow-lg"
