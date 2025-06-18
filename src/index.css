@@ -143,17 +143,49 @@ svg[style*="rgb(193, 150, 108)"],
   color: hsl(215 25% 44%) !important;
 }
 
-/* Force override any yellow backgrounds */
+/* Aggressively override ALL yellow and problematic colors */
 *[style*="background-color: rgb(255, 255, 0)"],
 *[style*="backgroundColor: rgb(255, 255, 0)"],
 *[style*="background: rgb(255, 255, 0)"],
 *[style*="background-color: yellow"],
 *[style*="background: yellow"],
-button[style*="background"],
-.button[style*="background"] {
-  background: hsl(6 78% 57%) !important;
-  background-color: hsl(188 95% 57%) !important;
+*[style*="color: rgb(193, 150, 108)"],
+*[color*="rgb(193, 150, 108)"],
+button[style*="background-color: rgb(255, 255, 0)"],
+button[style*="backgroundColor: rgb(255, 255, 0)"],
+button[style*="background: rgb(255, 255, 0)"],
+button[style*="background-color: yellow"],
+.button[style*="background"],
+*[style*="background-color: rgb(21, 255, 255)"] {
+  background: hsl(188 85% 47%) !important;
+  background-color: hsl(188 85% 47%) !important;
   color: white !important;
+}
+
+/* Override any element with the problematic brown-yellow color */
+* {
+  color: inherit !important;
+}
+
+*[style*="color: rgb(193, 150, 108)"] {
+  color: hsl(215 25% 44%) !important;
+}
+
+/* Force all buttons to use our ocean theme */
+button {
+  background-color: hsl(188 85% 47%) !important;
+  color: white !important;
+}
+
+button[class*="variant-outline"] {
+  background-color: transparent !important;
+  color: hsl(215 25% 44%) !important;
+  border-color: hsl(215 25% 44%) !important;
+}
+
+button[class*="variant-ghost"] {
+  background-color: transparent !important;
+  color: hsl(215 25% 44%) !important;
 }
 
 /* Ensure all SVG icons inherit proper text colors */
