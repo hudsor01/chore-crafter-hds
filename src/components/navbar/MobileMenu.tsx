@@ -18,7 +18,7 @@ const MobileMenuButton = memo(
         variant="ghost"
         size="sm"
         onClick={onToggle}
-        className="p-2 hover:bg-slate-100 transition-colors duration-200"
+        className="p-2 text-slate-600 hover:text-slate-800 hover:bg-cyan-50 transition-colors duration-200"
       >
         {isOpen ? (
           <X className="h-6 w-6 text-slate-600" />
