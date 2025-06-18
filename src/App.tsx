@@ -20,6 +20,34 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
+    // Force override any yellow or problematic colors dynamically
+    const fixColors = () => {
+      // Fix yellow backgrounds
+      document.querySelectorAll("*").forEach((el) => {
+        const element = el as HTMLElement;
+        const style = window.getComputedStyle(element);
+
+        // Check for yellow backgrounds
+        if (
+          style.backgroundColor === "rgb(255, 255, 0)" ||
+          style.backgroundColor === "yellow" ||
+          element.style.backgroundColor === "rgb(255, 255, 0)" ||
+          element.style.backgroundColor === "yellow"
+        ) {
+          element.style.backgroundColor = "hsl(188 85% 47%)";
+          element.style.color = "white";
+        }
+
+        // Check for the problematic brown-yellow color
+        if (
+          style.color === "rgb(193, 150, 108)" ||
+          element.style.color === "rgb(193, 150, 108)"
+        ) {
+          element.style.color = "hsl(215 25% 44%)";
+        }
+      });
+    };
+
     // Force remove any persistent toasts on app load
     const removeToasts = () => {
       const toastSelectors = [
@@ -48,9 +76,15 @@ const App = () => {
 
     // Remove on load and set interval to catch any new ones
     removeToasts();
-    const interval = setInterval(removeToasts, 100);
+    fixColors();
 
-    return () => clearInterval(interval);
+    const toastInterval = setInterval(removeToasts, 100);
+    const colorInterval = setInterval(fixColors, 500);
+
+    return () => {
+      clearInterval(toastInterval);
+      clearInterval(colorInterval);
+    };
   }, []);
 
   return (
