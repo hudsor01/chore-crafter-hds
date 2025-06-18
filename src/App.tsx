@@ -75,10 +75,6 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
-              <OnboardingFlow
-                isOpen={showOnboarding}
-                onClose={() => setShowOnboarding(false)}
-              />
               <ShortcutsDialog />
             </BrowserRouter>
           </TooltipProvider>
