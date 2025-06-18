@@ -1,20 +1,35 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { useAutoSave } from '@/hooks/useAutoSave';
-import { supabase } from '@/integrations/supabase/client';
-import { Mail, Phone, MapPin, Send, MessageCircle, Clock, CheckCircle, Save } from "lucide-react";
+import { useAutoSave } from "@/hooks/useAutoSave";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  MessageCircle,
+  Clock,
+  CheckCircle,
+  Save,
+} from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -24,17 +39,19 @@ const Contact = () => {
     data: formData,
     saveFunction: async (data) => {
       // Save to localStorage as backup
-      console.log('Auto-saving contact form data');
+      console.log("Auto-saving contact form data");
     },
     delay: 3000,
-    storageKey: 'contact-form-draft'
+    storageKey: "contact-form-draft",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -43,8 +60,8 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke('send-contact-email', {
-        body: formData
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: formData,
       });
 
       if (error) throw error;
@@ -57,15 +74,14 @@ const Contact = () => {
 
       // Reset form and clear auto-save
       setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
       });
-      localStorage.removeItem('contact-form-draft');
-
+      localStorage.removeItem("contact-form-draft");
     } catch (error: any) {
-      console.error('Error sending contact email:', error);
+      console.error("Error sending contact email:", error);
       toast({
         title: "Error sending message",
         description: "Please try again or contact us directly.",
@@ -84,9 +100,11 @@ const Contact = () => {
           Contact Us
         </h1>
         <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-          Have questions about ChoreChart? We'd love to hear from you. 
+          Have questions about ChoreChart? We'd love to hear from you.
           <br />
-          <span className="font-medium text-indigo-600">Send us a message and we'll respond as soon as possible.</span>
+          <span className="font-medium text-indigo-600">
+            Send us a message and we'll respond as soon as possible.
+          </span>
         </p>
       </div>
 
@@ -102,7 +120,8 @@ const Contact = () => {
                     Send us a message
                   </CardTitle>
                   <CardDescription className="text-lg text-slate-600">
-                    Fill out the form below and we'll get back to you within 24 hours.
+                    Fill out the form below and we'll get back to you within 24
+                    hours.
                   </CardDescription>
                 </div>
                 {isSaving && (
@@ -123,7 +142,10 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium text-slate-700">
+                    <Label
+                      htmlFor="name"
+                      className="text-sm font-medium text-slate-700"
+                    >
                       Full Name *
                     </Label>
                     <Input
@@ -138,7 +160,10 @@ const Contact = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                    <Label
+                      htmlFor="email"
+                      className="text-sm font-medium text-slate-700"
+                    >
                       Email Address *
                     </Label>
                     <Input
@@ -153,9 +178,12 @@ const Contact = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-sm font-medium text-slate-700">
+                  <Label
+                    htmlFor="subject"
+                    className="text-sm font-medium text-slate-700"
+                  >
                     Subject *
                   </Label>
                   <Input
@@ -169,9 +197,12 @@ const Contact = () => {
                     className="border-slate-300 focus:border-indigo-500 focus:ring-indigo-500"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-sm font-medium text-slate-700">
+                  <Label
+                    htmlFor="message"
+                    className="text-sm font-medium text-slate-700"
+                  >
                     Message *
                   </Label>
                   <Textarea
@@ -185,9 +216,9 @@ const Contact = () => {
                     className="border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 resize-none"
                   />
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 py-3"
                 >
@@ -213,7 +244,9 @@ const Contact = () => {
           {/* Contact Details */}
           <Card className="shadow-xl border-0 bg-gradient-to-br from-indigo-50 to-purple-50">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-slate-900">Get in Touch</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-900">
+                Get in Touch
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-3">
@@ -271,10 +304,14 @@ const Contact = () => {
           </Card>
 
           {/* FAQ Link */}
-          <Card className="shadow-xl border-0 bg-gradient-to-br from-orange-50 to-amber-50">
+          <Card className="shadow-xl border-0 bg-gradient-to-br from-teal-50 to-cyan-50">
             <CardContent className="p-6">
-              <h3 className="font-bold text-slate-900 mb-2">Quick Questions?</h3>
-              <p className="text-slate-600 mb-4">Check our FAQ section for instant answers to common questions.</p>
+              <h3 className="font-bold text-slate-900 mb-2">
+                Quick Questions?
+              </h3>
+              <p className="text-slate-600 mb-4">
+                Check our FAQ section for instant answers to common questions.
+              </p>
               <Button variant="outline" className="w-full">
                 View FAQ
               </Button>

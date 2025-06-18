@@ -1,4 +1,3 @@
-
 import { Chore, Child, ChoreAssignment } from "@/models/ChoreTypes";
 import { Button } from "@/components/ui/button";
 import { Check, Star } from "lucide-react";
@@ -13,30 +12,32 @@ type DailyChartViewProps = {
   isReadOnly?: boolean;
 };
 
-export const DailyChartView = ({ 
-  chartName, 
-  chores, 
-  children, 
-  assignments, 
+export const DailyChartView = ({
+  chartName,
+  chores,
+  children,
+  assignments,
   chartId,
-  isReadOnly = false 
+  isReadOnly = false,
 }: DailyChartViewProps) => {
-  const { 
-    markChoreComplete, 
-    verifyCompletion, 
+  const {
+    markChoreComplete,
+    verifyCompletion,
     removeCompletion,
     isChoreCompletedToday,
     getCompletionsForChore,
-    isLoading 
+    isLoading,
   } = useChoreCompletions(chartId);
 
   const handleToggleComplete = async (choreId: string, childId: string) => {
     if (isReadOnly) return;
-    
+
     if (isChoreCompletedToday(choreId, childId)) {
       const completions = getCompletionsForChore(choreId, childId);
-      const todayCompletion = completions.find(comp => 
-        new Date(comp.completed_at).toDateString() === new Date().toDateString()
+      const todayCompletion = completions.find(
+        (comp) =>
+          new Date(comp.completed_at).toDateString() ===
+          new Date().toDateString(),
       );
       if (todayCompletion) {
         await removeCompletion(todayCompletion.id);
@@ -48,10 +49,12 @@ export const DailyChartView = ({
 
   const handleVerifyCompletion = async (choreId: string, childId: string) => {
     if (isReadOnly) return;
-    
+
     const completions = getCompletionsForChore(choreId, childId);
-    const todayCompletion = completions.find(comp => 
-      new Date(comp.completed_at).toDateString() === new Date().toDateString()
+    const todayCompletion = completions.find(
+      (comp) =>
+        new Date(comp.completed_at).toDateString() ===
+        new Date().toDateString(),
     );
     if (todayCompletion && !todayCompletion.verified_by_parent) {
       await verifyCompletion(todayCompletion.id);
@@ -61,21 +64,24 @@ export const DailyChartView = ({
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-center">{chartName}</h2>
-      
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse min-w-[600px]">
           <thead>
             <tr className="bg-blue-100">
               <th className="border p-3 text-left min-w-[200px]">Chore</th>
-              {children.map(child => (
-                <th key={child.id} className="border p-3 text-center min-w-[120px]">
+              {children.map((child) => (
+                <th
+                  key={child.id}
+                  className="border p-3 text-center min-w-[120px]"
+                >
                   {child.name}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {chores.map(chore => (
+            {chores.map((chore) => (
               <tr key={chore.id} className="border-b hover:bg-gray-50">
                 <td className="border p-3">
                   <div className="flex items-center">
@@ -83,22 +89,29 @@ export const DailyChartView = ({
                     <div>
                       <div className="font-medium">{chore.name}</div>
                       {chore.description && (
-                        <div className="text-xs text-gray-500 mt-1">{chore.description}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {chore.description}
+                        </div>
                       )}
                     </div>
                   </div>
                 </td>
-                {children.map(child => {
+                {children.map((child) => {
                   const isAssigned = assignments.some(
-                    a => a.choreId === chore.id && a.childId === child.id
+                    (a) => a.choreId === chore.id && a.childId === child.id,
                   );
                   const isCompleted = isChoreCompletedToday(chore.id, child.id);
-                  const completions = getCompletionsForChore(chore.id, child.id);
-                  const todayCompletion = completions.find(comp => 
-                    new Date(comp.completed_at).toDateString() === new Date().toDateString()
+                  const completions = getCompletionsForChore(
+                    chore.id,
+                    child.id,
+                  );
+                  const todayCompletion = completions.find(
+                    (comp) =>
+                      new Date(comp.completed_at).toDateString() ===
+                      new Date().toDateString(),
                   );
                   const isVerified = todayCompletion?.verified_by_parent;
-                  
+
                   return (
                     <td key={child.id} className="border p-3 text-center">
                       {isAssigned ? (
@@ -106,31 +119,38 @@ export const DailyChartView = ({
                           <Button
                             variant={isCompleted ? "default" : "outline"}
                             size="sm"
-                            onClick={() => handleToggleComplete(chore.id, child.id)}
+                            onClick={() =>
+                              handleToggleComplete(chore.id, child.id)
+                            }
                             disabled={isReadOnly || isLoading}
                             className={`w-8 h-8 p-0 ${
-                              isCompleted 
-                                ? 'bg-green-500 hover:bg-green-600 text-white' 
-                                : 'border-gray-300 hover:bg-green-50'
+                              isCompleted
+                                ? "bg-green-500 hover:bg-green-600 text-white"
+                                : "border-gray-300 hover:bg-green-50"
                             }`}
                           >
                             {isCompleted ? <Check className="h-4 w-4" /> : null}
                           </Button>
-                          
+
                           {isCompleted && !isVerified && !isReadOnly && (
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleVerifyCompletion(chore.id, child.id)}
+                              onClick={() =>
+                                handleVerifyCompletion(chore.id, child.id)
+                              }
                               disabled={isLoading}
-                              className="w-6 h-6 p-0 text-yellow-500 hover:text-yellow-600"
+                              className="w-6 h-6 p-0 text-cyan-500 hover:text-cyan-600"
                             >
                               <Star className="h-3 w-3" />
                             </Button>
                           )}
-                          
+
                           {isVerified && (
-                            <div className="text-yellow-500" aria-label="Verified by parent">
+                            <div
+                              className="text-cyan-500"
+                              aria-label="Verified by parent"
+                            >
                               <Star className="h-4 w-4 fill-current" />
                             </div>
                           )}
@@ -146,7 +166,7 @@ export const DailyChartView = ({
           </tbody>
         </table>
       </div>
-      
+
       {!isReadOnly && (
         <div className="text-xs text-gray-500 text-center space-y-1">
           <p>• Click the circle to mark a chore as complete</p>
