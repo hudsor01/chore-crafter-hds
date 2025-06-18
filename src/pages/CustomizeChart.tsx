@@ -228,10 +228,10 @@ const CustomizeChart = () => {
 
   if (!template) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-cyan-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-200 border-t-cyan-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading your template...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your template...</p>
         </div>
       </div>
     );
@@ -363,36 +363,36 @@ const CustomizeChart = () => {
 
         {/* Current Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-300">
+          <Card className="bg-white border-gray-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-700 mb-1">
+              <div className="text-2xl font-bold text-black mb-1">
                 {children.length}
               </div>
-              <div className="text-sm text-gray-700">Children</div>
+              <div className="text-sm text-gray-600">Children</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-emerald-50 border-emerald-300">
+          <Card className="bg-white border-gray-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-emerald-700 mb-1">
+              <div className="text-2xl font-bold text-black mb-1">
                 {allChores.length}
               </div>
-              <div className="text-sm text-gray-700">Available Chores</div>
+              <div className="text-sm text-gray-600">Available Chores</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-gray-50 border-gray-300">
+          <Card className="bg-white border-gray-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-800 mb-1">
+              <div className="text-2xl font-bold text-black mb-1">
                 {assignments.length}
               </div>
-              <div className="text-sm text-gray-700">Assignments</div>
+              <div className="text-sm text-gray-600">Assignments</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-300">
+          <Card className="bg-white border-gray-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-700 mb-1 capitalize">
+              <div className="text-2xl font-bold text-black mb-1 capitalize">
                 {template.type}
               </div>
-              <div className="text-sm text-gray-700">Template</div>
+              <div className="text-sm text-gray-600">Template</div>
             </CardContent>
           </Card>
         </div>
@@ -402,8 +402,8 @@ const CustomizeChart = () => {
           {/* Step Content */}
           <div className="xl:col-span-2">
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-gray-50 border-b border-blue-200">
-                <CardTitle className="flex items-center gap-3 text-gray-800">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="flex items-center gap-3 text-black">
                   {steps[currentStep - 1]?.icon}
                   {steps[currentStep - 1]?.title}
                 </CardTitle>
@@ -447,7 +447,7 @@ const CustomizeChart = () => {
                         </p>
                         <Button
                           onClick={() => setCurrentStep(2)}
-                          className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800"
+                          className="bg-black hover:bg-gray-800 text-white"
                         >
                           <Users className="mr-2 h-4 w-4" />
                           Add Children
@@ -464,7 +464,7 @@ const CustomizeChart = () => {
                         </p>
                         <Button
                           onClick={() => setCurrentStep(3)}
-                          className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800"
+                          className="bg-black hover:bg-gray-800 text-white"
                         >
                           <ClipboardList className="mr-2 h-4 w-4" />
                           Add Chores
@@ -519,7 +519,7 @@ const CustomizeChart = () => {
                 {currentStep < 4 && (
                   <Button
                     onClick={() => setCurrentStep(currentStep + 1)}
-                    className="w-full justify-start bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800"
+                    className="w-full justify-start bg-black hover:bg-gray-800 text-white"
                   >
                     Next Step
                     <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
@@ -547,20 +547,18 @@ const CustomizeChart = () => {
             </Card>
 
             {/* Tips */}
-            <Card className="bg-gradient-to-br from-blue-50 to-gray-50 border-blue-200">
+            <Card className="bg-white border-gray-200">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-blue-800 flex items-center">
-                  <Sparkles className="mr-2 h-5 w-5 text-blue-600" />
+                <CardTitle className="text-lg text-black flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-gray-600" />
                   Pro Tips
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <div className="flex items-start gap-3">
-                  <Heart className="h-4 w-4 text-emerald-700 mt-0.5 flex-shrink-0" />
+                  <Heart className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-gray-800 mb-1">
-                      Start Simple
-                    </p>
+                    <p className="font-medium text-black mb-1">Start Simple</p>
                     <p className="text-gray-700">
                       Begin with 2-3 age-appropriate chores and build up
                       gradually.
@@ -568,11 +566,9 @@ const CustomizeChart = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Target className="h-4 w-4 text-blue-700 mt-0.5 flex-shrink-0" />
+                  <Target className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-gray-800 mb-1">
-                      Be Specific
-                    </p>
+                    <p className="font-medium text-black mb-1">Be Specific</p>
                     <p className="text-gray-700">
                       Clear instructions help children succeed and feel
                       confident.
@@ -580,9 +576,9 @@ const CustomizeChart = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Wand2 className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
+                  <Wand2 className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-gray-800 mb-1">
+                    <p className="font-medium text-black mb-1">
                       Celebrate Success
                     </p>
                     <p className="text-gray-700">
@@ -618,7 +614,7 @@ const CustomizeChart = () => {
             <Button
               onClick={handleSaveChart}
               disabled={calculateProgress() < 100}
-              className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800 text-white px-8 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-black hover:bg-gray-800 text-white px-8 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Check className="mr-2 h-4 w-4" />
               Create Chart
