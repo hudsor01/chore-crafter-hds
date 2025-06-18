@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -20,71 +19,90 @@ interface ChildStats {
   streak: number;
 }
 
-export const SiblingLeaderboard = ({ children, completions }: LeaderboardProps) => {
+export const SiblingLeaderboard = ({
+  children,
+  completions,
+}: LeaderboardProps) => {
   const calculateChildStats = (): ChildStats[] => {
-    return children.map(child => {
-      const childCompletions = completions.filter(c => c.child_id === child.id);
-      const verifiedCompletions = childCompletions.filter(c => c.verified_by_parent);
-      
-      // Calculate streak (consecutive days with completions)
-      const sortedCompletions = childCompletions
-        .sort((a, b) => new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime());
-      
-      let streak = 0;
-      const today = new Date();
-      let currentDate = new Date(today);
-      
-      for (let i = 0; i < 7; i++) {
-        const dayCompletions = sortedCompletions.filter(c => {
-          const completionDate = new Date(c.completed_at);
-          return completionDate.toDateString() === currentDate.toDateString();
-        });
-        
-        if (dayCompletions.length > 0) {
-          streak++;
-        } else {
-          break;
-        }
-        
-        currentDate.setDate(currentDate.getDate() - 1);
-      }
+    return children
+      .map((child) => {
+        const childCompletions = completions.filter(
+          (c) => c.child_id === child.id,
+        );
+        const verifiedCompletions = childCompletions.filter(
+          (c) => c.verified_by_parent,
+        );
 
-      return {
-        child,
-        completedChores: childCompletions.length,
-        verifiedChores: verifiedCompletions.length,
-        completionRate: childCompletions.length > 0 ? (verifiedCompletions.length / childCompletions.length) * 100 : 0,
-        streak
-      };
-    }).sort((a, b) => b.verifiedChores - a.verifiedChores);
+        // Calculate streak (consecutive days with completions)
+        const sortedCompletions = childCompletions.sort(
+          (a, b) =>
+            new Date(b.completed_at).getTime() -
+            new Date(a.completed_at).getTime(),
+        );
+
+        let streak = 0;
+        const today = new Date();
+        let currentDate = new Date(today);
+
+        for (let i = 0; i < 7; i++) {
+          const dayCompletions = sortedCompletions.filter((c) => {
+            const completionDate = new Date(c.completed_at);
+            return completionDate.toDateString() === currentDate.toDateString();
+          });
+
+          if (dayCompletions.length > 0) {
+            streak++;
+          } else {
+            break;
+          }
+
+          currentDate.setDate(currentDate.getDate() - 1);
+        }
+
+        return {
+          child,
+          completedChores: childCompletions.length,
+          verifiedChores: verifiedCompletions.length,
+          completionRate:
+            childCompletions.length > 0
+              ? (verifiedCompletions.length / childCompletions.length) * 100
+              : 0,
+          streak,
+        };
+      })
+      .sort((a, b) => b.verifiedChores - a.verifiedChores);
   };
 
   const childStats = calculateChildStats();
-  const maxVerified = Math.max(...childStats.map(s => s.verifiedChores), 1);
+  const maxVerified = Math.max(...childStats.map((s) => s.verifiedChores), 1);
 
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0:
-        return <Trophy className="h-6 w-6 text-yellow-500" />;
+        return <Trophy className="h-6 w-6 text-cyan-500" />;
       case 1:
-        return <Medal className="h-6 w-6 text-gray-400" />;
+        return <Medal className="h-6 w-6 text-slate-400" />;
       case 2:
-        return <Award className="h-6 w-6 text-amber-600" />;
+        return <Award className="h-6 w-6 text-teal-600" />;
       default:
-        return <div className="h-6 w-6 flex items-center justify-center text-gray-500 font-bold">{index + 1}</div>;
+        return (
+          <div className="h-6 w-6 flex items-center justify-center text-slate-500 font-bold">
+            {index + 1}
+          </div>
+        );
     }
   };
 
   const getRankColor = (index: number) => {
     switch (index) {
       case 0:
-        return "border-yellow-200 bg-yellow-50";
+        return "border-cyan-200 bg-cyan-50";
       case 1:
-        return "border-gray-200 bg-gray-50";
+        return "border-slate-200 bg-slate-50";
       case 2:
-        return "border-amber-200 bg-amber-50";
+        return "border-teal-200 bg-teal-50";
       default:
-        return "border-gray-200";
+        return "border-slate-200";
     }
   };
 
@@ -92,7 +110,7 @@ export const SiblingLeaderboard = ({ children, completions }: LeaderboardProps) 
     <Card className="border-purple-200">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
+          <Trophy className="mr-2 h-5 w-5 text-cyan-500" />
           Sibling Leaderboard
         </CardTitle>
       </CardHeader>
@@ -114,7 +132,10 @@ export const SiblingLeaderboard = ({ children, completions }: LeaderboardProps) 
               </div>
               <div className="flex space-x-2">
                 {stats.streak > 0 && (
-                  <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                  <Badge
+                    variant="secondary"
+                    className="bg-teal-100 text-teal-800"
+                  >
                     🔥 {stats.streak} day streak
                   </Badge>
                 )}
@@ -123,35 +144,43 @@ export const SiblingLeaderboard = ({ children, completions }: LeaderboardProps) 
                 </Badge>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Progress</span>
-                <span>{stats.verifiedChores}/{maxVerified}</span>
+                <span>
+                  {stats.verifiedChores}/{maxVerified}
+                </span>
               </div>
-              <Progress 
+              <Progress
                 value={(stats.verifiedChores / maxVerified) * 100}
                 className="h-2"
               />
             </div>
-            
+
             <div className="grid grid-cols-3 gap-4 mt-3 text-center text-sm">
               <div>
-                <div className="font-semibold text-blue-600">{stats.completedChores}</div>
+                <div className="font-semibold text-blue-600">
+                  {stats.completedChores}
+                </div>
                 <div className="text-gray-500">Total</div>
               </div>
               <div>
-                <div className="font-semibold text-green-600">{stats.verifiedChores}</div>
+                <div className="font-semibold text-green-600">
+                  {stats.verifiedChores}
+                </div>
                 <div className="text-gray-500">Verified</div>
               </div>
               <div>
-                <div className="font-semibold text-purple-600">{stats.streak}</div>
+                <div className="font-semibold text-purple-600">
+                  {stats.streak}
+                </div>
                 <div className="text-gray-500">Streak</div>
               </div>
             </div>
           </div>
         ))}
-        
+
         {childStats.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <Trophy className="mx-auto h-12 w-12 mb-2 text-gray-300" />
