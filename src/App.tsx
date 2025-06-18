@@ -1,12 +1,10 @@
-
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ChoreProvider } from "@/contexts/ChoreContext";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Layout from "@/components/Layout";
-import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 import ShortcutsDialog from "@/components/shortcuts/ShortcutsDialog";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -24,7 +22,7 @@ const App = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    const hasCompletedOnboarding = localStorage.getItem('onboarding-completed');
+    const hasCompletedOnboarding = localStorage.getItem("onboarding-completed");
     if (!hasCompletedOnboarding) {
       setShowOnboarding(true);
     }
@@ -32,24 +30,24 @@ const App = () => {
     // Force remove any persistent toasts on app load
     const removeToasts = () => {
       const toastSelectors = [
-        '.Toaster',
-        '[data-sonner-toaster]',
-        '.sonner-toast',
-        '[data-toast-viewport]',
-        '[data-radix-toast-viewport]',
-        '.toast-viewport',
+        ".Toaster",
+        "[data-sonner-toaster]",
+        ".sonner-toast",
+        "[data-toast-viewport]",
+        "[data-radix-toast-viewport]",
+        ".toast-viewport",
         'div[data-state="open"][data-swipe-direction]',
         'div[role="status"][aria-live="polite"]',
         'div[role="region"][aria-label*="toast"]',
-        'div[role="region"][aria-label*="Notification"]'
+        'div[role="region"][aria-label*="Notification"]',
       ];
-      
-      toastSelectors.forEach(selector => {
+
+      toastSelectors.forEach((selector) => {
         const elements = document.querySelectorAll(selector);
-        elements.forEach(el => {
-          (el as HTMLElement).style.display = 'none';
-          (el as HTMLElement).style.visibility = 'hidden';
-          (el as HTMLElement).style.opacity = '0';
+        elements.forEach((el) => {
+          (el as HTMLElement).style.display = "none";
+          (el as HTMLElement).style.visibility = "hidden";
+          (el as HTMLElement).style.opacity = "0";
           (el as HTMLElement).remove();
         });
       });
@@ -73,7 +71,10 @@ const App = () => {
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/templates" element={<ChoreTemplates />} />
-                  <Route path="/customize/:templateId" element={<CustomizeChart />} />
+                  <Route
+                    path="/customize/:templateId"
+                    element={<CustomizeChart />}
+                  />
                   <Route path="/chart/:chartId" element={<ViewChart />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/contact" element={<Contact />} />
@@ -81,9 +82,9 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
-              <OnboardingFlow 
-                isOpen={showOnboarding} 
-                onClose={() => setShowOnboarding(false)} 
+              <OnboardingFlow
+                isOpen={showOnboarding}
+                onClose={() => setShowOnboarding(false)}
               />
               <ShortcutsDialog />
             </BrowserRouter>
