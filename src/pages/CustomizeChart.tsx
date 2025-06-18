@@ -313,10 +313,10 @@ const CustomizeChart = () => {
                   <Card
                     className={`h-full border-2 transition-all duration-300 ${
                       isCompleted
-                        ? "border-cyan-500 bg-gradient-to-br from-cyan-50 to-cyan-100 shadow-lg"
+                        ? "border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-lg"
                         : isActive
-                          ? "border-teal-400 bg-gradient-to-br from-teal-50 to-cyan-50 shadow-md"
-                          : "border-slate-200 bg-white hover:border-cyan-300 hover:shadow-sm"
+                          ? "border-purple-400 bg-gradient-to-br from-purple-50 to-indigo-50 shadow-md"
+                          : "border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm"
                     }`}
                   >
                     <CardHeader className="pb-3">
@@ -324,9 +324,9 @@ const CustomizeChart = () => {
                         <div
                           className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
                             isCompleted
-                              ? "bg-cyan-500 text-white shadow-lg"
+                              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
                               : isActive
-                                ? "bg-teal-500 text-white shadow-md"
+                                ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md"
                                 : "bg-slate-100 text-slate-600"
                           }`}
                         >
@@ -340,9 +340,9 @@ const CustomizeChart = () => {
                           <h3
                             className={`font-semibold text-sm lg:text-base transition-colors ${
                               isCompleted
-                                ? "text-cyan-700"
+                                ? "text-indigo-700"
                                 : isActive
-                                  ? "text-teal-700"
+                                  ? "text-purple-700"
                                   : "text-slate-700"
                             }`}
                           >
