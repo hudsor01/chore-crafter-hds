@@ -25,7 +25,7 @@ const UserDropdown = memo(({ user, signOut }: AuthSectionProps) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-10 px-3 flex items-center space-x-2 hover:bg-slate-600 transition-all duration-200 text-slate-300 hover:text-cyan-300"
+          className="h-10 px-3 flex items-center space-x-2 hover:bg-gray-800 transition-all duration-200 text-gray-300 hover:text-blue-400"
         >
           <Avatar className="h-8 w-8">
             <AvatarImage
@@ -37,10 +37,10 @@ const UserDropdown = memo(({ user, signOut }: AuthSectionProps) => {
                 user.email?.charAt(0)?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium text-slate-300">
+          <span className="text-sm font-medium text-gray-300">
             {user.user_metadata?.full_name || "Account"}
           </span>
-          <ChevronDown className="h-4 w-4 text-slate-400" />
+          <ChevronDown className="h-4 w-4 text-gray-400" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -88,13 +88,13 @@ const AuthButtons = memo(() => (
     <Link to="/auth">
       <Button
         variant="ghost"
-        className="text-slate-300 hover:text-cyan-300 hover:bg-slate-600 transition-all duration-200"
+        className="text-gray-300 hover:text-blue-400 hover:bg-gray-800 transition-all duration-200"
       >
         Sign In
       </Button>
     </Link>
     <Link to="/auth">
-      <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+      <Button className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800 text-white px-6 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
         Get Started
       </Button>
     </Link>

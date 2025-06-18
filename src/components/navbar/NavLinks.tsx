@@ -24,14 +24,14 @@ export const DesktopNavLinks: React.FC<NavLinksProps> = ({ user }) => {
       </Link>
       <Link
         to="/contact"
-        className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+        className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 hover:underline underline-offset-4"
       >
         Contact
       </Link>
       {user && (
         <Link
           to="/dashboard"
-          className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+          className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 hover:underline underline-offset-4"
         >
           Dashboard
         </Link>
@@ -48,21 +48,21 @@ export const MobileNavLinks: React.FC<NavLinksProps> = ({
     <div className="flex flex-col space-y-4 pt-4 border-t border-slate-200">
       <Link
         to="/templates"
-        className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 py-2"
+        className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 py-2"
         onClick={onLinkClick}
       >
         Templates
       </Link>
       <Link
         to="/pricing"
-        className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 py-2"
+        className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 py-2"
         onClick={onLinkClick}
       >
         Pricing
       </Link>
       <Link
         to="/contact"
-        className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 py-2"
+        className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 py-2"
         onClick={onLinkClick}
       >
         Contact
@@ -70,7 +70,7 @@ export const MobileNavLinks: React.FC<NavLinksProps> = ({
       {user && (
         <Link
           to="/dashboard"
-          className="text-slate-300 hover:text-cyan-300 font-medium transition-colors duration-200 py-2"
+          className="text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 py-2"
           onClick={onLinkClick}
         >
           Dashboard
