@@ -19,14 +19,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
   useEffect(() => {
-    const hasCompletedOnboarding = localStorage.getItem("onboarding-completed");
-    if (!hasCompletedOnboarding) {
-      setShowOnboarding(true);
-    }
-
     // Force remove any persistent toasts on app load
     const removeToasts = () => {
       const toastSelectors = [
