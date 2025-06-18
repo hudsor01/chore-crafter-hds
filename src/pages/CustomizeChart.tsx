@@ -363,36 +363,36 @@ const CustomizeChart = () => {
 
         {/* Current Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200">
+          <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-indigo-600 mb-1">
+              <div className="text-2xl font-bold text-blue-700 mb-1">
                 {children.length}
               </div>
-              <div className="text-sm text-slate-700">Children</div>
+              <div className="text-sm text-gray-700">Children</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-purple-50 border-purple-200">
+          <Card className="bg-gradient-to-br from-white to-emerald-50 border-emerald-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600 mb-1">
+              <div className="text-2xl font-bold text-emerald-700 mb-1">
                 {allChores.length}
               </div>
-              <div className="text-sm text-slate-700">Available Chores</div>
+              <div className="text-sm text-gray-700">Available Chores</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200">
+          <Card className="bg-gradient-to-br from-white to-gray-50 border-gray-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-slate-700 mb-1">
+              <div className="text-2xl font-bold text-gray-800 mb-1">
                 {assignments.length}
               </div>
-              <div className="text-sm text-slate-700">Assignments</div>
+              <div className="text-sm text-gray-700">Assignments</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200">
+          <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-300">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-indigo-600 mb-1 capitalize">
+              <div className="text-2xl font-bold text-blue-700 mb-1 capitalize">
                 {template.type}
               </div>
-              <div className="text-sm text-slate-700">Template</div>
+              <div className="text-sm text-gray-700">Template</div>
             </CardContent>
           </Card>
         </div>
@@ -402,8 +402,8 @@ const CustomizeChart = () => {
           {/* Step Content */}
           <div className="xl:col-span-2">
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-200">
-                <CardTitle className="flex items-center gap-3 text-slate-800">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-gray-50 border-b border-blue-200">
+                <CardTitle className="flex items-center gap-3 text-gray-800">
                   {steps[currentStep - 1]?.icon}
                   {steps[currentStep - 1]?.title}
                 </CardTitle>
@@ -447,7 +447,7 @@ const CustomizeChart = () => {
                         </p>
                         <Button
                           onClick={() => setCurrentStep(2)}
-                          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                          className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800"
                         >
                           <Users className="mr-2 h-4 w-4" />
                           Add Children
@@ -464,7 +464,7 @@ const CustomizeChart = () => {
                         </p>
                         <Button
                           onClick={() => setCurrentStep(3)}
-                          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                          className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800"
                         >
                           <ClipboardList className="mr-2 h-4 w-4" />
                           Add Chores
@@ -519,7 +519,7 @@ const CustomizeChart = () => {
                 {currentStep < 4 && (
                   <Button
                     onClick={() => setCurrentStep(currentStep + 1)}
-                    className="w-full justify-start bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                    className="w-full justify-start bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800"
                   >
                     Next Step
                     <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
@@ -547,45 +547,45 @@ const CustomizeChart = () => {
             </Card>
 
             {/* Tips */}
-            <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+            <Card className="bg-gradient-to-br from-blue-50 to-gray-50 border-blue-200">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-indigo-800 flex items-center">
-                  <Sparkles className="mr-2 h-5 w-5 text-indigo-600" />
+                <CardTitle className="text-lg text-blue-800 flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-blue-600" />
                   Pro Tips
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <div className="flex items-start gap-3">
-                  <Heart className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <Heart className="h-4 w-4 text-emerald-700 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-indigo-800 mb-1">
+                    <p className="font-medium text-gray-800 mb-1">
                       Start Simple
                     </p>
-                    <p className="text-indigo-700">
+                    <p className="text-gray-700">
                       Begin with 2-3 age-appropriate chores and build up
                       gradually.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Target className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <Target className="h-4 w-4 text-blue-700 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-indigo-800 mb-1">
+                    <p className="font-medium text-gray-800 mb-1">
                       Be Specific
                     </p>
-                    <p className="text-indigo-700">
+                    <p className="text-gray-700">
                       Clear instructions help children succeed and feel
                       confident.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Wand2 className="h-4 w-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <Wand2 className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-indigo-800 mb-1">
+                    <p className="font-medium text-gray-800 mb-1">
                       Celebrate Success
                     </p>
-                    <p className="text-indigo-700">
+                    <p className="text-gray-700">
                       Positive reinforcement builds lasting habits and
                       motivation.
                     </p>
@@ -618,7 +618,7 @@ const CustomizeChart = () => {
             <Button
               onClick={handleSaveChart}
               disabled={calculateProgress() < 100}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-gray-800 to-blue-900 hover:from-gray-900 hover:to-blue-800 text-white px-8 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Check className="mr-2 h-4 w-4" />
               Create Chart
