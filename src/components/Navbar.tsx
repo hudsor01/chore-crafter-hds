@@ -16,13 +16,13 @@ const Navbar = memo(() => {
   console.log("Navbar rendering - User:", user ? "Logged in" : "Not logged in");
 
   return (
-    <nav className="bg-gradient-to-r from-slate-900 via-gray-900 to-slate-900 backdrop-blur-md shadow-lg border-b border-gray-800 sticky top-0 z-50 transition-all duration-300">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
-            className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-all duration-300"
+            className="text-2xl font-bold text-black hover:text-gray-700"
           >
             ChoreChart
           </Link>
