@@ -243,7 +243,7 @@ const CustomizeChart = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-cyan-50 to-teal-50">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white py-12">
+      <div className="bg-gradient-to-r from-gray-900 via-slate-900 to-gray-900 text-white py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex-1">
@@ -251,41 +251,41 @@ const CustomizeChart = () => {
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/templates")}
-                  className="text-slate-300 hover:text-cyan-300 hover:bg-slate-600/50 p-2"
+                  className="text-gray-300 hover:text-blue-400 hover:bg-gray-800/50 p-2"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
-                <Badge className="bg-slate-600/50 text-cyan-300 border-slate-500">
+                <Badge className="bg-gray-800/50 text-blue-400 border-gray-700">
                   {template.type.charAt(0).toUpperCase() +
                     template.type.slice(1)}{" "}
                   Template
                 </Badge>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-cyan-300">
+              <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-blue-400">
                 Customize Your {template.name}
               </h1>
-              <p className="text-slate-300 text-lg max-w-2xl">
+              <p className="text-gray-300 text-lg max-w-2xl">
                 Let's create a personalized chore chart that works perfectly for
                 your family.
               </p>
             </div>
 
             {/* Progress Summary */}
-            <div className="bg-slate-600/30 backdrop-blur-sm rounded-xl p-6 min-w-[280px] border border-slate-500/30">
+            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 min-w-[280px] border border-gray-700/40">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-slate-300 font-medium">
+                <span className="text-gray-300 font-medium">
                   Setup Progress
                 </span>
-                <span className="text-cyan-300 font-bold text-lg">
+                <span className="text-blue-400 font-bold text-lg">
                   {calculateProgress()}%
                 </span>
               </div>
               <Progress
                 value={calculateProgress()}
-                className="mb-3 bg-slate-600/50"
+                className="mb-3 bg-gray-800/60"
               />
-              <div className="flex items-center text-slate-300 text-sm">
-                <Target className="h-4 w-4 mr-2 text-cyan-300" />
+              <div className="flex items-center text-gray-300 text-sm">
+                <Target className="h-4 w-4 mr-2 text-blue-400" />
                 {nextAction.text}
               </div>
             </div>
@@ -313,10 +313,10 @@ const CustomizeChart = () => {
                   <Card
                     className={`h-full border-2 transition-all duration-300 ${
                       isCompleted
-                        ? "border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-lg"
+                        ? "border-emerald-600 bg-gradient-to-br from-emerald-900/20 to-green-900/20 shadow-lg"
                         : isActive
-                          ? "border-purple-400 bg-gradient-to-br from-purple-50 to-indigo-50 shadow-md"
-                          : "border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm"
+                          ? "border-blue-500 bg-gradient-to-br from-blue-900/20 to-gray-900/20 shadow-md"
+                          : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:shadow-sm"
                     }`}
                   >
                     <CardHeader className="pb-3">
@@ -324,10 +324,10 @@ const CustomizeChart = () => {
                         <div
                           className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
                             isCompleted
-                              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                              ? "bg-gradient-to-r from-emerald-700 to-green-700 text-white shadow-lg"
                               : isActive
-                                ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md"
-                                : "bg-slate-100 text-slate-600"
+                                ? "bg-gradient-to-r from-blue-600 to-gray-700 text-white shadow-md"
+                                : "bg-gray-200 text-gray-700"
                           }`}
                         >
                           {isCompleted ? (
@@ -340,10 +340,10 @@ const CustomizeChart = () => {
                           <h3
                             className={`font-semibold text-sm lg:text-base transition-colors ${
                               isCompleted
-                                ? "text-indigo-700"
+                                ? "text-emerald-800"
                                 : isActive
-                                  ? "text-purple-700"
-                                  : "text-slate-700"
+                                  ? "text-blue-800"
+                                  : "text-gray-700"
                             }`}
                           >
                             {step.title}
