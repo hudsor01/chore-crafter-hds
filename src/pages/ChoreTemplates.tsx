@@ -89,7 +89,7 @@ const ChoreTemplates = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-slate-100">
       {/* Ocean-inspired header */}
       <div className="bg-gradient-to-r from-slate-800 via-cyan-900 to-slate-900 text-white py-16">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-cyan-500/20 rounded-full">
               <Waves className="h-12 w-12 text-cyan-300" />
@@ -105,7 +105,7 @@ const ChoreTemplates = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 max-w-7xl">
         {/* Template Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-12">
           <div className="bg-gradient-to-r from-cyan-50 to-slate-50 p-6 rounded-xl border border-cyan-200 hover:shadow-lg transition-all duration-300">
@@ -237,7 +237,7 @@ const ChoreTemplates = () => {
         </div>
 
         {/* Help Section */}
-        <div className="mt-16 bg-gradient-to-r from-cyan-50 to-slate-50 rounded-xl p-8 border border-cyan-200 max-w-5xl mx-auto shadow-lg">
+        <div className="mt-12 lg:mt-16 bg-gradient-to-r from-cyan-50 to-slate-50 rounded-xl p-6 lg:p-8 border border-cyan-200 max-w-6xl mx-auto shadow-lg">
           <h3 className="text-xl font-semibold text-slate-800 mb-3">
             Need Help Choosing?
           </h3>
