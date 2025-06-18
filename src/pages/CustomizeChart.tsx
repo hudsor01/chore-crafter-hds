@@ -363,36 +363,36 @@ const CustomizeChart = () => {
 
         {/* Current Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-white to-cyan-50 border-cyan-200">
+          <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-cyan-600 mb-1">
+              <div className="text-2xl font-bold text-indigo-600 mb-1">
                 {children.length}
               </div>
-              <div className="text-sm text-slate-600">Children</div>
+              <div className="text-sm text-slate-700">Children</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-teal-50 border-teal-200">
+          <Card className="bg-gradient-to-br from-white to-purple-50 border-purple-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-teal-600 mb-1">
+              <div className="text-2xl font-bold text-purple-600 mb-1">
                 {allChores.length}
               </div>
-              <div className="text-sm text-slate-600">Available Chores</div>
+              <div className="text-sm text-slate-700">Available Chores</div>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-slate-600 mb-1">
+              <div className="text-2xl font-bold text-slate-700 mb-1">
                 {assignments.length}
               </div>
-              <div className="text-sm text-slate-600">Assignments</div>
+              <div className="text-sm text-slate-700">Assignments</div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-white to-cyan-50 border-cyan-200">
+          <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-cyan-600 mb-1 capitalize">
+              <div className="text-2xl font-bold text-indigo-600 mb-1 capitalize">
                 {template.type}
               </div>
-              <div className="text-sm text-slate-600">Template</div>
+              <div className="text-sm text-slate-700">Template</div>
             </CardContent>
           </Card>
         </div>
@@ -402,7 +402,7 @@ const CustomizeChart = () => {
           {/* Step Content */}
           <div className="xl:col-span-2">
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-cyan-50 to-teal-50 border-b border-cyan-200">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-200">
                 <CardTitle className="flex items-center gap-3 text-slate-800">
                   {steps[currentStep - 1]?.icon}
                   {steps[currentStep - 1]?.title}
@@ -447,7 +447,7 @@ const CustomizeChart = () => {
                         </p>
                         <Button
                           onClick={() => setCurrentStep(2)}
-                          className="bg-cyan-600 hover:bg-cyan-700"
+                          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                         >
                           <Users className="mr-2 h-4 w-4" />
                           Add Children
@@ -464,7 +464,7 @@ const CustomizeChart = () => {
                         </p>
                         <Button
                           onClick={() => setCurrentStep(3)}
-                          className="bg-teal-600 hover:bg-teal-700"
+                          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                         >
                           <ClipboardList className="mr-2 h-4 w-4" />
                           Add Chores
@@ -519,7 +519,7 @@ const CustomizeChart = () => {
                 {currentStep < 4 && (
                   <Button
                     onClick={() => setCurrentStep(currentStep + 1)}
-                    className="w-full justify-start bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700"
+                    className="w-full justify-start bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                   >
                     Next Step
                     <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
@@ -618,7 +618,7 @@ const CustomizeChart = () => {
             <Button
               onClick={handleSaveChart}
               disabled={calculateProgress() < 100}
-              className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-8 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Check className="mr-2 h-4 w-4" />
               Create Chart
