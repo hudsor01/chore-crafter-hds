@@ -243,7 +243,7 @@ const CustomizeChart = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-cyan-50 to-teal-50">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-slate-800 via-cyan-900 to-slate-900 text-white py-12">
+      <div className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex-1">
@@ -251,40 +251,40 @@ const CustomizeChart = () => {
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/templates")}
-                  className="text-cyan-300 hover:text-white hover:bg-cyan-800/50 p-2"
+                  className="text-slate-300 hover:text-cyan-300 hover:bg-slate-600/50 p-2"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
-                <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-400">
+                <Badge className="bg-slate-600/50 text-cyan-300 border-slate-500">
                   {template.type.charAt(0).toUpperCase() +
                     template.type.slice(1)}{" "}
                   Template
                 </Badge>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-300 via-white to-cyan-300 bg-clip-text text-transparent">
+              <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-cyan-300">
                 Customize Your {template.name}
               </h1>
-              <p className="text-cyan-100 text-lg max-w-2xl">
+              <p className="text-slate-300 text-lg max-w-2xl">
                 Let's create a personalized chore chart that works perfectly for
                 your family.
               </p>
             </div>
 
             {/* Progress Summary */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 min-w-[280px]">
+            <div className="bg-slate-600/30 backdrop-blur-sm rounded-xl p-6 min-w-[280px] border border-slate-500/30">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-cyan-200 font-medium">
+                <span className="text-slate-300 font-medium">
                   Setup Progress
                 </span>
-                <span className="text-white font-bold text-lg">
+                <span className="text-cyan-300 font-bold text-lg">
                   {calculateProgress()}%
                 </span>
               </div>
               <Progress
                 value={calculateProgress()}
-                className="mb-3 bg-white/20"
+                className="mb-3 bg-slate-600/50"
               />
-              <div className="flex items-center text-cyan-200 text-sm">
+              <div className="flex items-center text-slate-300 text-sm">
                 <Target className="h-4 w-4 mr-2 text-cyan-300" />
                 {nextAction.text}
               </div>
